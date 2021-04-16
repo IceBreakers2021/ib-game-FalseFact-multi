@@ -1,3 +1,3 @@
-# Game: FalseFact (single machine demo)
+# Game: FalseFact (WebGL multiplayer over network)
 
-Single machine version of the FalseFact game for demonstration purposes.
+IceBreakers FalseFact game.

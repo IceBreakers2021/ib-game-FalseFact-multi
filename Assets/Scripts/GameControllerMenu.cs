@@ -9,16 +9,19 @@ public class GameControllerMenu : MonoBehaviour
     // Object for handling variables across scenes
     public GameManager gameManager;
 
-    public Slider sliderPlayerNumber;
-    public Text textPlayerNumberIndicator;
+    public GameObject buttonCreate;
+    public GameObject buttonJoin;
+    public GameObject inputFieldGameID;
 
     // Variables
-    public int numberPlayers;
+    private int numberPlayers;
+    private string gameID_input;
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
+        numberPlayers = 5;
         gameManager.SetNumberPlayers(numberPlayers);
     }
 
@@ -31,19 +34,35 @@ public class GameControllerMenu : MonoBehaviour
     void Awake()
     {
         // Initializations
-        sliderPlayerNumber.value = numberPlayers;
-        textPlayerNumberIndicator.text = numberPlayers.ToString();
+        gameID_input = "";
     }
 
-    public void PlayerNumberChange(float value)
+
+    void Goto_Loppy()
     {
-        numberPlayers = (int)value;
-        textPlayerNumberIndicator.text = numberPlayers.ToString();
-        gameManager.SetNumberPlayers(numberPlayers);
+        // TODO: save GameID in GameManager
+        SceneManager.LoadScene(sceneName:"Lobby");
     }
 
-    public void PressPlay()
+    public void OnClick_Create()
     {
-        SceneManager.LoadScene(sceneName:"MainGame");
+        Goto_Loppy();
+    }
+
+    public void OnClick_Join()
+    {
+        if (gameID_input == "")
+        {
+            return;
+        }
+        else
+        {
+            Goto_Loppy();
+        }
+    }
+
+    public void OnEndEdit_GameID(string value)
+    {
+        gameID_input = value;
     }
 }
