@@ -6,9 +6,10 @@ public class GameManager : MonoBehaviour
 {
     // Make this object persistent over scenes
     private static GameManager s_Instance = null;
-    
+
     // Variables
     private int numberPlayers;
+    private string gameID;
     public Player mainPlayer = new Player();
 
     void Awake()
@@ -28,13 +29,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetNumberPlayers(int value)
+    public void Set_numberPlayers(int value)
     {
         numberPlayers = value;
     }
-    public int GetNumberPlayers()
+    public int Get_numberPlayers()
     {
         return numberPlayers;
+    }
+    public void Set_gameID(string value)
+    {
+        gameID = value;
+    }
+    public string Get_gameID()
+    {
+        return gameID;
     }
 }
 

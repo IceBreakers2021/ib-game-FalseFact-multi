@@ -63,16 +63,20 @@ public class GameControllerMain : MonoBehaviour
     int falseFactPosition;
     int activePlayer;
 
+    private string gameID;
+
     void Awake()
     {
         // Look for and get the GameManager from previous scene
         gameManager = GameObject.FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
         int playerNumber = player.Length;
+        gameID = "?";
         // Set variables to inherited values from GameManager
         if (gameManager != null)
         {
-            playerNumber = gameManager.GetNumberPlayers() - 1;
+            playerNumber = gameManager.Get_numberPlayers() - 1;
+            gameID = gameManager.Get_gameID();
         }
 
         // Initialize all players as disabled
@@ -369,20 +373,6 @@ public class GameControllerMain : MonoBehaviour
         }
     }
 
-    void SelectPlayer(int player_nr)
-    {
-        return; //Ignoring, each player is their own id.
-        activePlayer = player_nr;
-        for (int i = 0; i < player.Length; i++)
-        {
-            player[i].button.interactable = true;
-        }
-        if (activePlayer > 0)
-        {
-            player[activePlayer-1].button.interactable = false;
-        }
-    }
-
     void MoveIndicators()
     {
         for (int i = 0; i < player.Length; i++)
@@ -440,23 +430,6 @@ public class GameControllerMain : MonoBehaviour
                 Debug.Log("#### Unknown game state!");
                 break;
         }
-    }
-
-    public void OnClick_Player1()
-    {
-        SelectPlayer(1);
-    }
-    public void OnClick_Player2()
-    {
-        SelectPlayer(2);
-    }
-    public void OnClick_Player3()
-    {
-        SelectPlayer(3);
-    }
-    public void OnClick_Player4()
-    {
-        SelectPlayer(4);
     }
 
     public void OnEndEdit_True1(string value)

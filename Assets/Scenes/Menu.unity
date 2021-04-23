@@ -1354,6 +1354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d250a81b086cf533aa2b3fdff53be823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainPlayer:
+    button: {fileID: 0}
+    indicator: {fileID: 0}
+    color: {r: 0, g: 0, b: 0, a: 0}
+    name: 
+    webId: 
 --- !u!1 &1976205846
 GameObject:
   m_ObjectHideFlags: 0

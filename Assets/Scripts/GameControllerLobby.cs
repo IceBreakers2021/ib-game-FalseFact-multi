@@ -15,6 +15,7 @@ public class GameControllerLobby : MonoBehaviour
 
     // Variables
     public Sprite[] playerSprites;
+    private string gameID;
     private string playerName;
     private int spriteNumber;
     private string webId;
@@ -24,11 +25,11 @@ public class GameControllerLobby : MonoBehaviour
         // Look for and get the GameManager from previous scene
         gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
-        // ...
+        gameID = "?";
         // Set variables to inherited values from GameManager
         if (gameManager != null)
         {
-            // ...
+            gameID = gameManager.Get_gameID();
         }
         // Other initializations
         playerName = "";
@@ -37,10 +38,9 @@ public class GameControllerLobby : MonoBehaviour
 
     public void Set_Web_Id(string web_id)
     {
-        
         webId = web_id;
     }
-    
+
     public void OnClick_PlayerIcon()
     {
         // Get current player icon number
@@ -73,18 +73,18 @@ public class GameControllerLobby : MonoBehaviour
     public void OnClick_Play()
     {
         // TODO: Sprite / Color selection and propagation to other people.
-        gameManager.mainPlayer = new Player(playerName, Color.red, webId);
+        gameManager.mainPlayer = new Player(playerName, spriteNumber, Color.red, webId);
         // Sends along all necessary info for other clients to add this player to their game
         Join_Game(playerName, spriteNumber);
         SceneManager.LoadScene(sceneName:"MainGame");
     }
-    
+
     [DllImport("__Internal")]
     private static extern void Join_Game(string playerName, int avatarId);
-    
+
     [DllImport("__Internal")]
     private static extern void Get_Web_Id();
-    
+
     //TODO : Lobby Needs to ask for other players on this channel.
     //TODO : Lobby needs to handle new players joining while creating their character.
 }

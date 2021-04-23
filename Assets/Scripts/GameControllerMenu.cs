@@ -15,16 +15,16 @@ public class GameControllerMenu : MonoBehaviour
     public GameObject inputFieldGameID;
 
     // Variables
-    // private int numberPlayers;
+    private int maxNumberPlayers;
     private string gameID_input;
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
-        // numberPlayers = 5;
+        maxNumberPlayers = 5;
+        gameManager.Set_numberPlayers(maxNumberPlayers);
         // Ask for number of players in the game.
-        // gameManager.SetNumberPlayers(numberPlayers);
     }
 
     // Update is called once per frame
@@ -41,9 +41,9 @@ public class GameControllerMenu : MonoBehaviour
 
     void Go_To_Lobby()
     {
-        // TODO: save GameID in GameManager
         if (gameID_input == "") return;
         //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
+        gameManager.Set_gameID(gameID_input); // Sets the gameID for Unity
         Set_Lobby(gameID_input); // Sets the gameID for the websocket channel
         SceneManager.LoadScene(sceneName: "Lobby");
     }
@@ -57,7 +57,7 @@ public class GameControllerMenu : MonoBehaviour
     {
         Go_To_Lobby();
     }
-    
+
     public void OnEndEdit_GameID(string value)
     {
         gameID_input = value;
@@ -65,5 +65,4 @@ public class GameControllerMenu : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void Set_Lobby(string _channelName);
-    
 }
