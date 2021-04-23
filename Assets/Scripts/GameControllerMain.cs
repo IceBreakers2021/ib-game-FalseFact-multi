@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +10,8 @@ public class Player
     public Button button;
     public Image indicator;
     public Color color;
-
+    public int webId;
+    
     [System.NonSerialized]
     public int selectedFact;
     [System.NonSerialized]
@@ -34,6 +36,15 @@ public class InstructionTexts
 
 public class GameControllerMain : MonoBehaviour
 {
+    [DllImport("__Internal")]
+    private static extern void Change_Choice(string playerName, int choice);
+
+    [DllImport("__Internal")]
+    private static extern void Create_List(string factTrue1, string factTrue2, string falseFact, int falsePosition);
+
+    [DllImport("__Internal")]
+    private static extern void End_Round();
+    
     private GameManager gameManager; // Object for handling variables across scenes
     public GameObject buttonConfirm;
     public Player[] player;
@@ -303,6 +314,7 @@ public class GameControllerMain : MonoBehaviour
 
     void SelectFact(int fact_nr, int player_nr)
     {
+        //TODO: Send the choice made by this player to everyone using "Change_Choice" 
         if (player_nr > 0)
         {
             int p = player_nr - 1;
@@ -372,6 +384,7 @@ public class GameControllerMain : MonoBehaviour
 
     void SelectPlayer(int player_nr)
     {
+        return; //Ignoring, each player is their own id.
         activePlayer = player_nr;
         for (int i = 0; i < player.Length; i++)
         {
@@ -412,6 +425,8 @@ public class GameControllerMain : MonoBehaviour
             case State.Input:
                 if (factTrue1 != "" && factTrue2 != "" && factFalse1 != "")
                 {
+                    //Sends the list of facts and false position to all other players
+                    Create_List(factTrue1, factTrue1, factFalse1, falseFactPosition);
                     GotoState_Guess();
                 }
                 break;
@@ -427,6 +442,7 @@ public class GameControllerMain : MonoBehaviour
                 }
                 if (ok)
                 {
+                    End_Round(); // Sends message to everyone to go to result stage.
                     GotoState_Result();
                 }
                 break;
@@ -482,6 +498,16 @@ public class GameControllerMain : MonoBehaviour
         SelectFact(3, activePlayer);
     }
 
+    /**
+     * Occurs when we get data from another client about a choice they made.
+     */
+    public void OnWebFactSelect(string twoInts)
+    {
+        string[] parameters = twoInts.Split(',');
+        //Can only take 1 parameter from Javascript, having to separate it into integers here.
+        //Json may be more useful for more complicated inputs
+        SelectFact(int.Parse(parameters[0]), int.Parse(parameters[1]));
+    }
     public void OnClick_Help()
     {
         textInstructions.enabled = !textInstructions.enabled;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -15,12 +16,13 @@ public class GameControllerLobby : MonoBehaviour
     // Variables
     public Sprite[] playerSprites;
     private string playerName;
-
-
+    private int spriteNumber;
+    private string webId;
+    
     void Awake()
     {
         // Look for and get the GameManager from previous scene
-        gameManager = GameObject.FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
         // ...
         // Set variables to inherited values from GameManager
@@ -31,21 +33,14 @@ public class GameControllerLobby : MonoBehaviour
 
         // Other initializations
         playerName = "";
+        Get_Web_Id(); // Aks react to call Set_Web_Id
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void Set_Web_Id(string web_id)
     {
-        
+        webId = web_id;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
+    
     public void OnClick_PlayerIcon()
     {
         // Get current player icon number
@@ -66,6 +61,7 @@ public class GameControllerLobby : MonoBehaviour
         }
         // sprite_nr = Random.Range(0, playerSprites.Length);
         // Change player icon
+        spriteNumber = sprite_nr;
         imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[sprite_nr];
     }
 
@@ -77,6 +73,13 @@ public class GameControllerLobby : MonoBehaviour
     public void OnClick_Play()
     {
         // TODO: set things up
+        Join_Game(playerName, spriteNumber);
         SceneManager.LoadScene(sceneName:"MainGame");
     }
+    
+    [DllImport("__Internal")]
+    private static extern void Join_Game(string playerName, int avatarId);
+    
+    [DllImport("__Internal")]
+    private static extern void Get_Web_Id();
 }
