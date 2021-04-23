@@ -4,19 +4,6 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class Player
-{
-    public Button button;
-    public Image indicator;
-    public Color color;
-    public int webId;
-    
-    [System.NonSerialized]
-    public int selectedFact;
-    [System.NonSerialized]
-    public Vector2 indicatorPosition;
-}
 
 [System.Serializable]
 public class FactColors
@@ -503,11 +490,19 @@ public class GameControllerMain : MonoBehaviour
      */
     public void OnWebFactSelect(string twoInts)
     {
+        //Will get choice (int) and webId (string)
         string[] parameters = twoInts.Split(',');
         //Can only take 1 parameter from Javascript, having to separate it into integers here.
         //Json may be more useful for more complicated inputs
         SelectFact(int.Parse(parameters[0]), int.Parse(parameters[1]));
     }
+
+    //This will need to be added to Lobby and Main Controller.
+    public void OnPlayerJoins()
+    {
+        
+    }
+    
     public void OnClick_Help()
     {
         textInstructions.enabled = !textInstructions.enabled;

@@ -30,7 +30,6 @@ public class GameControllerLobby : MonoBehaviour
         {
             // ...
         }
-
         // Other initializations
         playerName = "";
         Get_Web_Id(); // Aks react to call Set_Web_Id
@@ -38,6 +37,7 @@ public class GameControllerLobby : MonoBehaviour
 
     public void Set_Web_Id(string web_id)
     {
+        
         webId = web_id;
     }
     
@@ -72,7 +72,9 @@ public class GameControllerLobby : MonoBehaviour
 
     public void OnClick_Play()
     {
-        // TODO: set things up
+        // TODO: Sprite / Color selection and propagation to other people.
+        gameManager.mainPlayer = new Player(playerName, Color.red, webId);
+        // Sends along all necessary info for other clients to add this player to their game
         Join_Game(playerName, spriteNumber);
         SceneManager.LoadScene(sceneName:"MainGame");
     }
@@ -82,4 +84,7 @@ public class GameControllerLobby : MonoBehaviour
     
     [DllImport("__Internal")]
     private static extern void Get_Web_Id();
+    
+    //TODO : Lobby Needs to ask for other players on this channel.
+    //TODO : Lobby needs to handle new players joining while creating their character.
 }
