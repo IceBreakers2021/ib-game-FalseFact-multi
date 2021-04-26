@@ -10,12 +10,12 @@ public class GameControllerMenu : MonoBehaviour
 {
     // Object for handling variables across scenes
     public GameManager gameManager;
-    
+
     public GameObject buttonJoin;
     public GameObject inputFieldGameID;
-    
+
     public GameObject imagePlayerIcon;
-    
+
     public GameObject inputFieldPlayerName;
     public Sprite[] playerSprites;
 
@@ -45,7 +45,7 @@ public class GameControllerMenu : MonoBehaviour
         gameID_input = "";
         playerName = "";
     }
-    
+
     public void OnClick_Join()
     {
         if (playerName == "")
@@ -55,7 +55,7 @@ public class GameControllerMenu : MonoBehaviour
             //Web_Log("No player name");
             return;
         }
-        
+
         if (gameID_input == "")
         {
             //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
@@ -63,12 +63,16 @@ public class GameControllerMenu : MonoBehaviour
             //Web_Log("No game id");
             return;
         }
-        
+
         gameManager.Set_gameID(gameID_input); // Sets the gameID for Unity
+#if (UNITY_WEBGL == true && UNITY_EDITOR == false)
         Set_Lobby(gameID_input); // Sets the channel for the websocket channel
         Get_Web_Id(); // May have to change order of operations here.
+#elif UNITY_EDITOR == true
+        Set_Web_Id("testID");
+#endif
     }
-    
+
     //A little ugly, but we will join after getting the web id
     public void Set_Web_Id(string web_id)
     {
@@ -77,7 +81,7 @@ public class GameControllerMenu : MonoBehaviour
         gameManager.players.Add(webId, gameManager.mainPlayer);
         SceneManager.LoadScene(sceneName: "MakeFacts");
     }
-    
+
     public void OnClick_PlayerIcon()
     {
         // Get current player icon number
@@ -104,12 +108,12 @@ public class GameControllerMenu : MonoBehaviour
         imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[sprite_nr];
     }
 
-    
+
     public void OnEndEdit_GameID(string value)
     {
         gameID_input = value;
     }
-    
+
     public void OnEndEdit_PlayerName(string value)
     {
         playerName = value;
@@ -117,10 +121,10 @@ public class GameControllerMenu : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void Set_Lobby(string _channelName);
-    
+
     [DllImport("__Internal")]
     private static extern void Get_Web_Id();
-    
+
     [DllImport("__Internal")]
     private static extern void Web_Log(string line);
 }

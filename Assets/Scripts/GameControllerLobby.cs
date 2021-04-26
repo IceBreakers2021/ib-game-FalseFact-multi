@@ -18,6 +18,7 @@ public class GameControllerLobby : MonoBehaviour
     
     void Awake()
     {
+        Debug.Log("Lobby waking up...");
         // Look for and get the GameManager from previous scene
         gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
@@ -27,12 +28,13 @@ public class GameControllerLobby : MonoBehaviour
         {
             gameID = gameManager.Get_gameID();
         }
-        Debug.Log(gameManager.myFacts);
 
         // Other initializations
         //TODO : Would like to have the channel name a the top of the page.
         //TODO: Have some text that tells them what to do, i.e. that they should have facts about themselves.
     }
+    
+    //TODO : Handle when someone else has joined as first player, save them as activePlayer
     
     public void OnClick_Play()
     {
@@ -40,9 +42,11 @@ public class GameControllerLobby : MonoBehaviour
         // Have feedback when they try, to remind them they need to fill in the facts.
         if (gameManager.myFacts.Any(fact => fact == ""))
         {
+            Debug.Log("Not all facts entered, gameManager is null =="+(gameManager==null));
             return; // If any fact is not filled, don't allow th play button to work.
         }
         // Sends along all necessary info for other clients to add this player to their game
+        //TODO: Get the current teller, then join game
         Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
         SceneManager.LoadScene(sceneName: "MainGame");
     }

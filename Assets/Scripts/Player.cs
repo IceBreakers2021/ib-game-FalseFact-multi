@@ -10,7 +10,6 @@ public class Player
     public string name;
     public int spriteNumber;
     public string webId;
-    //public int currentChoice
     //public List facts (false, true, true)
 
     [System.NonSerialized]

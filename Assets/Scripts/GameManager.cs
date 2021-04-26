@@ -12,7 +12,11 @@ public class GameManager : MonoBehaviour
     public Player mainPlayer = new Player();
     //First fact is always the false one.
     public string[] myFacts = new string[3];
-    public bool isTelling = false;
+    public string[] currentFacts = new string[3];
+
+    public int falseFactPosition = -1;
+    //Who is revealing their facts.
+    public string currentTeller = "";
     //Sorted list of players, with sorting should have the same order for all players.
     public SortedDictionary<string, Player> players = new SortedDictionary<string, Player>();
     // public int maxPlayers = 1;
@@ -51,6 +55,11 @@ public class GameManager : MonoBehaviour
     public string Get_gameID()
     {
         return gameID;
+    }
+
+    public bool isTelling()
+    {
+        return currentTeller == mainPlayer.webId;
     }
 }
 

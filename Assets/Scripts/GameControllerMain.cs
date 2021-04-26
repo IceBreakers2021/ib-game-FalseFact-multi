@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 
 [System.Serializable]
@@ -24,31 +27,26 @@ public class InstructionTexts
 public class GameControllerMain : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void Change_Choice(string playerName, int choice);
+    private static extern void Change_Choice(string playerWebId, int choice);
 
     [DllImport("__Internal")]
     private static extern void Create_List(string factTrue1, string factTrue2, string falseFact, int falsePosition);
 
     [DllImport("__Internal")]
     private static extern void RequestChannelPlayers();
-    
+
     [DllImport("__Internal")]
     private static extern void End_Round();
-    
+
     [DllImport("__Internal")]
     private static extern void Join_Game(string playerName, int avatarId);
 
-    
-    private GameManager gameManager; // Object for handling variables across scenes
+
     public GameObject buttonConfirm;
-    public Player[] player;
     public float indicatorMoveSpeed;
     public float indicatorMarginStart;
     public float indicatorMargin;
     public float revealedWrongAlpha;
-    public GameObject inputFieldTrue1;
-    public GameObject inputFieldTrue2;
-    public GameObject inputFieldFalse1;
     public GameObject buttonFact1;
     public GameObject buttonFact2;
     public GameObject buttonFact3;
@@ -58,127 +56,102 @@ public class GameControllerMain : MonoBehaviour
 
     enum State
     {
-        Input,
         Guess,
         Result
     }
+
     State state;
-
-    string factTrue1;
-    string factTrue2;
-    string factFalse1;
-    int falseFactPosition;
-    int activePlayer;
-
     private string gameID;
+    private GameManager gameManager; // Object for handling variables across scenes
+    private const double TOLERANCE = 0.00001; //Floating point comparison
 
     void Awake()
     {
+        Debug.Log("Main game waking up...");
         // Look for and get the GameManager from previous scene
-        gameManager = GameObject.FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
-        int playerNumber = player.Length;
         gameID = "?";
         // Set variables to inherited values from GameManager
         if (gameManager != null)
         {
-            playerNumber = gameManager.Get_numberPlayers() - 1;
             gameID = gameManager.Get_gameID();
+        }
+        else
+        {
+            Debug.Log("---------------Game manager is null");
         }
 
         // Initialize all players as disabled
-        for (int i = 0; i < player.Length; i++)
-        {
-            player[i].indicator.enabled = false;
-            player[i].selectedFact = 0;
-            player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
-        }
-        // Set player number
-        if (playerNumber < player.Length)
-        {
-            System.Array.Resize(ref player, playerNumber);
-        }
 
         // Disable help text
         textInstructions.enabled = false;
         //TODO : Lobby Needs to ask for other players on this channel.
         RequestChannelPlayers();
-        // Go into first state
-        GotoState_Input();
+        //TODO : Any player initialization should be done when players join.
+        // for (int i = 0; i < player.Length; i++)
+        // {
+        //     player[i].indicator.enabled = false;
+        //     player[i].selectedFact = 0;
+        //     player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
+        // }
+        //If there is currently no teller, then we set ourselves as the current teller.
+        // TODO: Current teller needs to tell people who join the game they are the teller.
+        if (gameManager.currentTeller == "")
+        {
+            SetupAsCurrentTeller();
+            Debug.Log("Done setting up as teller");
+        }
+        else
+        {
+            SetupAsPlayer();
+            Debug.Log("Done setting up as player");
+        }
+        GotoState_Guess();
     }
 
+    void SetupAsCurrentTeller()
+    {
+        gameManager.currentTeller = gameManager.mainPlayer.webId;
+        gameManager.falseFactPosition = Random.Range(1, 4);
+        gameManager.myFacts.CopyTo(gameManager.currentFacts,0);
+    }
+
+    void SetupAsPlayer()
+    {
+        //TODO: Should have gotten falseFactPosition, current facts, at the same time as currentTeller
+    }
+    
     void Update()
     {
         MoveIndicators();
     }
 
-    void GotoState_Input()
-    {
-        state = State.Input;
-
-        factTrue1 = "";
-        factTrue2 = "";
-        factFalse1 = "";
-        falseFactPosition = 0;
-        activePlayer = 0;
-
-        for (int i = 0; i < player.Length; i++)
-        {
-            player[i].indicator.enabled = false;
-            player[i].selectedFact = 0;
-            player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
-        }
-        SetActive_InputFields(true);
-        ClearInputField_InputFields();
-        SetActive_ButtonFacts(false);
-        SetImageAlpha_PlayerIndicatorStatus(false);
-
-        textInstructions.text = instructionTexts.input;
-    }
-
     void GotoState_Guess()
     {
+        Debug.Log("Going into gotoStateGuess");
         state = State.Guess;
-
-        for (int i = 0; i < player.Length; i++)
-        {
-            player[i].selectedFact = 0;
-        }
-        SetActive_InputFields(false);
         SetActive_ButtonFacts(true);
         SetButtonInteractable_ButtonFacts(true);
         SetImageColor_ButtonFacts_revealed(false);
         SetImageAlpha_PlayerIndicatorStatus(false);
 
-        // Randomize false fact position and write to buttons
-        SetRandomFalseFactPositionAndButtonText();
+        // Organizes buttons based on falseFactPosition.
+        SetUpButtonText();
 
         textInstructions.text = instructionTexts.guess;
+        Debug.Log("Done with gotoState");
     }
 
     void GotoState_Result()
     {
         state = State.Result;
-
-        for (int i = 0; i < player.Length; i++)
-        {
-            player[i].indicator.enabled = true;
-        }
-        SetActive_InputFields(false);
         SetActive_ButtonFacts(true);
         SetButtonInteractable_ButtonFacts(false);
         SetImageColor_ButtonFacts_revealed(true);
         SetImageAlpha_PlayerIndicatorStatus(true);
 
         textInstructions.text = instructionTexts.result;
-    }
-
-    void SetActive_InputFields(bool toggle)
-    {
-        // Attention: GameObjects have to be active in order to be modified!
-        inputFieldTrue1.SetActive(toggle);
-        inputFieldTrue2.SetActive(toggle);
-        inputFieldFalse1.SetActive(toggle);
     }
 
     void SetActive_ButtonFacts(bool toggle)
@@ -196,32 +169,25 @@ public class GameControllerMain : MonoBehaviour
         buttonFact3.GetComponentInParent<Button>().interactable = toggle;
     }
 
-    void ClearInputField_InputFields()
+    void SetUpButtonText()
     {
-        inputFieldTrue1.GetComponentInParent<InputField>().text = "";
-        inputFieldTrue2.GetComponentInParent<InputField>().text = "";
-        inputFieldFalse1.GetComponentInParent<InputField>().text = "";
-    }
-
-    void SetRandomFalseFactPositionAndButtonText()
-    {
-        falseFactPosition = Random.Range(1, 4);
-        switch (falseFactPosition)
+        //Current facts, first will always be the false fact.
+        switch (gameManager.falseFactPosition)
         {
             case 1:
-                buttonFact1.GetComponentInChildren<Text>().text = factFalse1;
-                buttonFact2.GetComponentInChildren<Text>().text = factTrue1;
-                buttonFact3.GetComponentInChildren<Text>().text = factTrue2;
+                buttonFact1.GetComponentInChildren<Text>().text = gameManager.currentFacts[0];
+                buttonFact2.GetComponentInChildren<Text>().text = gameManager.currentFacts[1];
+                buttonFact3.GetComponentInChildren<Text>().text = gameManager.currentFacts[2];
                 break;
             case 2:
-                buttonFact1.GetComponentInChildren<Text>().text = factTrue1;
-                buttonFact2.GetComponentInChildren<Text>().text = factFalse1;
-                buttonFact3.GetComponentInChildren<Text>().text = factTrue2;
+                buttonFact1.GetComponentInChildren<Text>().text = gameManager.currentFacts[1];
+                buttonFact2.GetComponentInChildren<Text>().text = gameManager.currentFacts[0];
+                buttonFact3.GetComponentInChildren<Text>().text = gameManager.currentFacts[2];
                 break;
             case 3:
-                buttonFact1.GetComponentInChildren<Text>().text = factTrue1;
-                buttonFact2.GetComponentInChildren<Text>().text = factTrue2;
-                buttonFact3.GetComponentInChildren<Text>().text = factFalse1;
+                buttonFact1.GetComponentInChildren<Text>().text = gameManager.currentFacts[1];
+                buttonFact2.GetComponentInChildren<Text>().text = gameManager.currentFacts[2];
+                buttonFact3.GetComponentInChildren<Text>().text = gameManager.currentFacts[0];
                 break;
             default:
                 Debug.Log("#### Unknown false fact position!");
@@ -240,7 +206,7 @@ public class GameControllerMain : MonoBehaviour
             buttonFact3.GetComponentInParent<Image>().color = c;
             c = factColors.falseColor;
             c.a = 1.0f;
-            switch (falseFactPosition)
+            switch (gameManager.falseFactPosition)
             {
                 case 1:
                     buttonFact1.GetComponentInParent<Image>().color = c;
@@ -268,7 +234,7 @@ public class GameControllerMain : MonoBehaviour
         if (toggle)
         {
             float falseFactY = 0.0f;
-            switch (falseFactPosition)
+            switch (gameManager.falseFactPosition)
             {
                 case 1:
                     falseFactY = buttonFact1.GetComponentInParent<RectTransform>().anchoredPosition.y;
@@ -282,119 +248,115 @@ public class GameControllerMain : MonoBehaviour
                 default:
                     break;
             }
-            for (int i = 0; i < player.Length; i++)
+
+            foreach (var player in gameManager.players.Values)
             {
-                Color c = player[i].indicator.color;
-                if (player[i].indicatorPosition.y == falseFactY)
-                {
-                    c.a = 1.0f;
-                }
-                else
-                {
-                    c.a = revealedWrongAlpha;
-                }
-                player[i].indicator.color = c;
+                Color c = player.indicator.color;
+                c.a = Math.Abs(player.indicatorPosition.y - falseFactY) < TOLERANCE ? 1.0f : revealedWrongAlpha;
+                player.indicator.color = c;
             }
         }
         else
         {
-            for (int i = 0; i < player.Length; i++)
+            foreach (var player in gameManager.players.Values)
             {
-                Color c = player[i].indicator.color;
+                Color c = player.indicator.color;
                 c.a = 1.0f;
-                player[i].indicator.color = c;
+                player.indicator.color = c;
             }
         }
     }
 
-    void SelectFact(int fact_nr, int player_nr)
+    void SelectFact(int fact_nr, Player player)
     {
-        //TODO: Send the choice made by this player to everyone using "Change_Choice" 
-        if (player_nr > 0)
+        if (player == gameManager.mainPlayer)
         {
-            int p = player_nr - 1;
-            player[p].selectedFact = fact_nr;
+            Change_Choice(player.webId, fact_nr);
+        }
 
-            //// Handle indicator positions
-            // Get old position
-            Vector2 targetPos = player[p].indicatorPosition;
-            // Calculate new X positions of other indicators
-            for (float xx = (targetPos.x + indicatorMargin); xx < (targetPos.x + player.Length*indicatorMargin); xx += indicatorMargin)
-            {
-                for (int i = 0; i < player.Length; i++)
-                {
-                    if (!player[i].indicator.enabled) continue;
-                    if (player[i].indicatorPosition.x == xx && player[i].indicatorPosition.y == targetPos.y)
-                    {
-                        player[i].indicatorPosition.x -= indicatorMargin;
-                    }
-                }
-            }
-            // Calculate new Y position of current indicator
-            switch (fact_nr)
-            {
-                case 1:
-                    targetPos.y = buttonFact1.GetComponentInParent<RectTransform>().anchoredPosition.y;
-                    break;
-                case 2:
-                    targetPos.y = buttonFact2.GetComponentInParent<RectTransform>().anchoredPosition.y;
-                    break;
-                case 3:
-                    targetPos.y = buttonFact3.GetComponentInParent<RectTransform>().anchoredPosition.y;
-                    break;
-                default:
-                    // stay at current Y
-                    break;
-            }
-            // Calculate new X position of current indicator
-            for (float xx = indicatorMarginStart; xx < (indicatorMarginStart + player.Length*indicatorMargin); xx += indicatorMargin)
-            {
-                bool ok = true;
-                for (int i = 0; i < player.Length; i++)
-                {
-                    if (p == i || !player[i].indicator.enabled) continue;
-                    if (player[i].indicatorPosition.x == xx && player[i].indicatorPosition.y == targetPos.y)
-                    {
-                        ok = false;
-                        break;
-                    }
-                }
-                if (ok)
-                {
-                    targetPos.x = xx;
-                    break;
-                }
-            }
-            // Apply
-            player[p].indicatorPosition = targetPos;
+        player.selectedFact = fact_nr;
 
-            if (!player[p].indicator.enabled)
+        //// Handle indicator positions
+        // Get old position
+        Vector2 targetPos = player.indicatorPosition;
+        // Calculate new X positions of other indicators
+        for (float xx = (targetPos.x + indicatorMargin);
+            xx < (targetPos.x + gameManager.Get_numberPlayers() * indicatorMargin);
+            xx += indicatorMargin)
+        {
+            foreach (var playersValue in gameManager.players.Values)
             {
-                // Set initial indicator position
-                player[p].indicator.rectTransform.anchoredPosition = player[p].indicatorPosition;
-                player[p].indicator.enabled = true;
+                if (!playersValue.indicator.enabled) continue;
+                if (Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE &&
+                    Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)
+                {
+                    playersValue.indicatorPosition.x -= indicatorMargin;
+                }
             }
         }
+
+        // Calculate new Y position of current indicator
+        switch (fact_nr)
+        {
+            case 1:
+                targetPos.y = buttonFact1.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                break;
+            case 2:
+                targetPos.y = buttonFact2.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                break;
+            case 3:
+                targetPos.y = buttonFact3.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                break;
+            default:
+                // stay at current Y
+                break;
+        }
+
+        // Calculate new X position of current indicator
+        for (float xx = indicatorMarginStart;
+            xx < (indicatorMarginStart + gameManager.Get_numberPlayers() * indicatorMargin);
+            xx += indicatorMargin)
+        {
+            bool ok = true;
+            foreach (var playersValue in gameManager.players.Values)
+            {
+                if (playersValue == gameManager.mainPlayer || !playersValue.indicator.enabled) continue;
+                if (!(Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE) ||
+                    !(Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)) continue;
+                ok = false;
+                break;
+            }
+
+            if (!ok) continue;
+            targetPos.x = xx;
+            break;
+        }
+
+        // Apply
+        player.indicatorPosition = targetPos;
+
+        if (player.indicator.enabled) return;
+        // Set initial indicator position
+        player.indicator.rectTransform.anchoredPosition = player.indicatorPosition;
+        player.indicator.enabled = true;
     }
 
     void MoveIndicators()
     {
-        for (int i = 0; i < player.Length; i++)
+        foreach (var player in gameManager.players.Values)
         {
-            if (player[i].indicator.rectTransform.anchoredPosition != player[i].indicatorPosition)
+            if (player.indicator.rectTransform.anchoredPosition == player.indicatorPosition) continue;
+            var distance = player.indicatorPosition - player.indicator.rectTransform.anchoredPosition;
+            if (distance.magnitude <= indicatorMoveSpeed)
             {
-                Vector2 distance = player[i].indicatorPosition - player[i].indicator.rectTransform.anchoredPosition;
-                if (distance.magnitude <= indicatorMoveSpeed)
-                {
-                    player[i].indicator.rectTransform.anchoredPosition = player[i].indicatorPosition;
-                }
-                else
-                {
-                    Vector2 move = distance;
-                    move.Normalize();
-                    move *= indicatorMoveSpeed;
-                    player[i].indicator.rectTransform.anchoredPosition += move;
-                }
+                player.indicator.rectTransform.anchoredPosition = player.indicatorPosition;
+            }
+            else
+            {
+                Vector2 move = distance;
+                move.Normalize();
+                move *= indicatorMoveSpeed;
+                player.indicator.rectTransform.anchoredPosition += move;
             }
         }
     }
@@ -403,32 +365,19 @@ public class GameControllerMain : MonoBehaviour
     {
         switch (state)
         {
-            case State.Input:
-                if (factTrue1 != "" && factTrue2 != "" && factFalse1 != "")
-                {
-                    //Sends the list of facts and false position to all other players
-                    Create_List(factTrue1, factTrue1, factFalse1, falseFactPosition);
-                    GotoState_Guess();
-                }
-                break;
             case State.Guess:
                 // Check if all have chosen a fact
-                bool ok = true;
-                for (int i = 0; i < player.Length; i++)
-                {
-                    if (player[i].selectedFact <= 0)
-                    {
-                        ok = false;
-                    }
-                }
+                var ok = gameManager.players.Values.All(player => player.selectedFact != -1);
                 if (ok)
                 {
                     End_Round(); // Sends message to everyone to go to result stage.
                     GotoState_Result();
                 }
+
                 break;
             case State.Result:
-                GotoState_Input();
+                //TODO: change the activePlayer (current Teller) and mark that the current player has told their stuff.
+                GotoState_Guess();
                 break;
             default:
                 Debug.Log("#### Unknown game state!");
@@ -439,27 +388,29 @@ public class GameControllerMain : MonoBehaviour
 
     public void OnClick_Fact1()
     {
-        SelectFact(1, activePlayer);
+        SelectFact(1, gameManager.mainPlayer);
     }
+
     public void OnClick_Fact2()
     {
-        SelectFact(2, activePlayer);
+        SelectFact(2, gameManager.mainPlayer);
     }
+
     public void OnClick_Fact3()
     {
-        SelectFact(3, activePlayer);
+        SelectFact(3, gameManager.mainPlayer);
     }
 
     /**
      * Occurs when we get data from another client about a choice they made.
      */
-    public void OnWebFactSelect(string twoInts)
+    public void OnOtherPlayerSelect(string twoInts)
     {
         //Will get choice (int) and webId (string)
         string[] parameters = twoInts.Split(',');
         //Can only take 1 parameter from Javascript, having to separate it into integers here.
         //Json may be more useful for more complicated inputs
-        SelectFact(int.Parse(parameters[0]), int.Parse(parameters[1]));
+        SelectFact(int.Parse(parameters[0]), gameManager.players[parameters[1]]);
     }
 
     //From javascript, adds new player to the dictionary of known players, according to their web id.
@@ -477,7 +428,7 @@ public class GameControllerMain : MonoBehaviour
         //Easiest is to just resend the Join_Game message
         Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
     }
-    
+
     public void OnClick_Help()
     {
         textInstructions.enabled = !textInstructions.enabled;

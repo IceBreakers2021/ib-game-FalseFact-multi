@@ -1046,34 +1046,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonConfirm: {fileID: 1168786402}
-  player:
-  - button: {fileID: 0}
-    indicator: {fileID: 2055631827}
-    name: 
-    spriteNumber: 0
-    webId: 
-  - button: {fileID: 0}
-    indicator: {fileID: 272253470}
-    name: 
-    spriteNumber: 0
-    webId: 
-  - button: {fileID: 0}
-    indicator: {fileID: 2104045822}
-    name: 
-    spriteNumber: 0
-    webId: 
-  - button: {fileID: 0}
-    indicator: {fileID: 1296027769}
-    name: 
-    spriteNumber: 0
-    webId: 
   indicatorMoveSpeed: 10
   indicatorMarginStart: 220
   indicatorMargin: 60
   revealedWrongAlpha: 0.4
-  inputFieldTrue1: {fileID: 0}
-  inputFieldTrue2: {fileID: 0}
-  inputFieldFalse1: {fileID: 0}
   buttonFact1: {fileID: 554765961}
   buttonFact2: {fileID: 510428648}
   buttonFact3: {fileID: 1166773616}

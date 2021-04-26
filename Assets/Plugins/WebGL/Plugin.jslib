@@ -7,7 +7,7 @@ mergeInto(LibraryManager.library, {
      ReactUnityWebGL.Join_Game(Pointer_stringify(playerName), avatarId);
    },
  
-   Change_Choice: function (playerName, choice) {
+   Change_Choice: function (playerWebId, choice) {
      ReactUnityWebGL.Change_Choice(Pointer_stringify(playerName), choice);
    },
    
