@@ -40,7 +40,10 @@ public class GameControllerMain : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void Join_Game(string playerName, int avatarId);
-
+    
+    [DllImport("__Internal")]
+    private static extern void Reply_Current_Teller(string webid, int falsePosition, string false1, string true1,
+        string true2);
 
     public GameObject buttonConfirm;
     public GameObject playerIconPrefab;
@@ -450,5 +453,21 @@ public class GameControllerMain : MonoBehaviour
     public void OnClick_Help()
     {
         textInstructions.enabled = !textInstructions.enabled;
+    }
+    public void SetCurrentTeller(string inputParams)
+    {
+        string[] parameters = inputParams.Split(',');
+        gameManager.currentTeller = parameters[0];
+        gameManager.falseFactPosition = int.Parse(parameters[1]);
+        parameters.CopyTo(gameManager.currentFacts, 2);
+    }
+
+    public void OnRequest_CurrentTeller()
+    {
+        if (!gameManager.isTelling()) return;
+        //A little ugly, unsure if the plugin can do it in a nicer way.
+        Debug.Log("I am current teller and replying to request for tellers");
+        Reply_Current_Teller(gameManager.mainPlayer.webId, gameManager.falseFactPosition, gameManager.currentFacts[0],
+            gameManager.currentFacts[1], gameManager.currentFacts[2]);
     }
 }

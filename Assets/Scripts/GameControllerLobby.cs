@@ -45,8 +45,6 @@ public class GameControllerLobby : MonoBehaviour
         //TODO: Have some text that tells them what to do, i.e. that they should have facts about themselves.
     }
 
-    //TODO : Handle when someone else has joined as first player, save them as activePlayer
-
     public void OnClick_Play()
     {
         //TODO, make this button not interactable until they have filled in the facts, 
@@ -78,10 +76,15 @@ public class GameControllerLobby : MonoBehaviour
     {
         gameManager.myFacts[0] = value;
     }
-
+    
     //Parameters should be : webid, falseFactPosition, facts
     public void SetCurrentTeller(string inputParams)
     {
+        if (!gameManager.isTelling())
+        {
+            Debug.Log("Current teller ignoring setCurrentTeller call");
+            return;
+        }
         string[] parameters = inputParams.Split(',');
         gameManager.currentTeller = parameters[0];
         gameManager.falseFactPosition = int.Parse(parameters[1]);
@@ -91,8 +94,8 @@ public class GameControllerLobby : MonoBehaviour
     public void OnRequest_CurrentTeller()
     {
         if (!gameManager.isTelling()) return;
-        Debug.Log("frog");
         //A little ugly, unsure if the plugin can do it in a nicer way.
+        Debug.Log("We should not have gotten here...");
         Reply_Current_Teller(gameManager.mainPlayer.webId, gameManager.falseFactPosition, gameManager.currentFacts[0],
             gameManager.currentFacts[1], gameManager.currentFacts[2]);
     }
