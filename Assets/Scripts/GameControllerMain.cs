@@ -91,7 +91,6 @@ public class GameControllerMain : MonoBehaviour
 
         // Disable help text
         textInstructions.enabled = false;
-        //TODO : Lobby Needs to ask for other players on this channel.
 #if (UNITY_WEBGL == true && UNITY_EDITOR == false)
         RequestChannelPlayers();
 #elif UNITY_EDITOR == true
@@ -106,7 +105,6 @@ public class GameControllerMain : MonoBehaviour
         //     player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
         // }
         //If there is currently no teller, then we set ourselves as the current teller.
-        // TODO: Current teller needs to tell people who join the game they are the teller.
         if (gameManager.currentTeller == "")
         {
             SetupAsCurrentTeller();
@@ -478,4 +476,12 @@ public class GameControllerMain : MonoBehaviour
         Reply_Current_Teller(gameManager.mainPlayer.webId, gameManager.falseFactPosition, gameManager.currentFacts[0],
             gameManager.currentFacts[1], gameManager.currentFacts[2]);
     }
+    
+    //TODO: Handle on End Round
+    //TODO: Only allow the current Teller to click the confirm button
+    //TODO: Remove teller from chosing options
+    //TODO: Teller can't click confirm if there are no other people
+    //TODO: Teller can't click confirm if not everyone who has joined has chosen an option
+    //TODO: Each Player should have a field for if they have delivered their choices, and send on request for players.
+    //TODO: Method of moving on to another person, either buttons for teller to click or next person in sorted dictionary.
 }
