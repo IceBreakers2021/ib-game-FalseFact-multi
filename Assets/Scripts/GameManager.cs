@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     // Variables
     private string gameID;
-    public Player mainPlayer = new Player();
+    public Player mainPlayer;
     //First fact is always the false one.
     public string[] myFacts = new string[3];
     public string[] currentFacts = new string[3];

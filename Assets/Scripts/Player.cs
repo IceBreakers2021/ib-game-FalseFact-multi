@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class Player
 {
     //TODO : Need to show player indicator // color.
-    public Image indicator;
+    public GameObject indicator;
+    public RectTransform rectTransform;
     public string name;
     public int spriteNumber;
     public string webId;
@@ -24,5 +25,11 @@ public class Player
         this.webId = webId;
     }
 
-    public Player(){}
+    public void setIndicator(GameObject _indicator)
+    {
+        indicator = _indicator;
+        rectTransform = indicator.GetComponent<RectTransform>();
+    }
+
+    // public Player(){}
 }

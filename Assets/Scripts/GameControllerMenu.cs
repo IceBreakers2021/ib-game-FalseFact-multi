@@ -13,9 +13,7 @@ public class GameControllerMenu : MonoBehaviour
 
     public GameObject buttonJoin;
     public GameObject inputFieldGameID;
-
     public GameObject imagePlayerIcon;
-
     public GameObject inputFieldPlayerName;
     public Sprite[] playerSprites;
 

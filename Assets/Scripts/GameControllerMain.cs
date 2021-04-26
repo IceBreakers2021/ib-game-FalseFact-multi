@@ -43,6 +43,8 @@ public class GameControllerMain : MonoBehaviour
 
 
     public GameObject buttonConfirm;
+    public GameObject playerIconPrefab;
+    public Sprite[] playerSprites;
     public float indicatorMoveSpeed;
     public float indicatorMarginStart;
     public float indicatorMargin;
@@ -87,7 +89,18 @@ public class GameControllerMain : MonoBehaviour
         // Disable help text
         textInstructions.enabled = false;
         //TODO : Lobby Needs to ask for other players on this channel.
+#if (UNITY_WEBGL == true && UNITY_EDITOR == false)
         RequestChannelPlayers();
+#elif UNITY_EDITOR == true
+        Debug.Log("TODO: Fake players for testing.");
+#endif
+        GameObject playerIcon =
+            Instantiate(playerIconPrefab, new Vector3(indicatorMarginStart + indicatorMargin, 0, 0),
+                Quaternion.identity);
+        playerIcon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
+        playerIcon.GetComponent<Image>().sprite = playerSprites[gameManager.mainPlayer.spriteNumber];
+        gameManager.mainPlayer.setIndicator(playerIcon);
+        // gameManager.mainPlayer.
         //TODO : Any player initialization should be done when players join.
         // for (int i = 0; i < player.Length; i++)
         // {
@@ -107,6 +120,7 @@ public class GameControllerMain : MonoBehaviour
             SetupAsPlayer();
             Debug.Log("Done setting up as player");
         }
+
         GotoState_Guess();
     }
 
@@ -114,17 +128,17 @@ public class GameControllerMain : MonoBehaviour
     {
         gameManager.currentTeller = gameManager.mainPlayer.webId;
         gameManager.falseFactPosition = Random.Range(1, 4);
-        gameManager.myFacts.CopyTo(gameManager.currentFacts,0);
+        gameManager.myFacts.CopyTo(gameManager.currentFacts, 0);
     }
 
     void SetupAsPlayer()
     {
         //TODO: Should have gotten falseFactPosition, current facts, at the same time as currentTeller
     }
-    
+
     void Update()
     {
-        MoveIndicators();
+        MoveIndicators(); //Currently broken
     }
 
     void GotoState_Guess()
@@ -248,22 +262,22 @@ public class GameControllerMain : MonoBehaviour
                 default:
                     break;
             }
-
-            foreach (var player in gameManager.players.Values)
-            {
-                Color c = player.indicator.color;
-                c.a = Math.Abs(player.indicatorPosition.y - falseFactY) < TOLERANCE ? 1.0f : revealedWrongAlpha;
-                player.indicator.color = c;
-            }
+            //TODO: Adjust playerIcon GameObject to show they were wrong.
+            // foreach (var player in gameManager.players.Values)
+            // {
+            //     Color c = player.indicator.color;
+            //     c.a = Math.Abs(player.indicatorPosition.y - falseFactY) < TOLERANCE ? 1.0f : revealedWrongAlpha;
+            //     player.indicator.color = c;
+            // }
         }
         else
         {
-            foreach (var player in gameManager.players.Values)
-            {
-                Color c = player.indicator.color;
-                c.a = 1.0f;
-                player.indicator.color = c;
-            }
+            // foreach (var player in gameManager.players.Values)
+            // {
+            //     Color c = player.indicator.color;
+            //     c.a = 1.0f;
+            //     player.indicator.color = c;
+            // }
         }
     }
 
@@ -271,7 +285,11 @@ public class GameControllerMain : MonoBehaviour
     {
         if (player == gameManager.mainPlayer)
         {
+#if (UNITY_WEBGL == true && UNITY_EDITOR == false)
             Change_Choice(player.webId, fact_nr);
+#elif UNITY_EDITOR == true
+            Debug.Log("Would have called change_choice");
+#endif
         }
 
         player.selectedFact = fact_nr;
@@ -286,7 +304,7 @@ public class GameControllerMain : MonoBehaviour
         {
             foreach (var playersValue in gameManager.players.Values)
             {
-                if (!playersValue.indicator.enabled) continue;
+                if (!playersValue.indicator.activeSelf) continue;
                 if (Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE &&
                     Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)
                 {
@@ -320,7 +338,7 @@ public class GameControllerMain : MonoBehaviour
             bool ok = true;
             foreach (var playersValue in gameManager.players.Values)
             {
-                if (playersValue == gameManager.mainPlayer || !playersValue.indicator.enabled) continue;
+                if (playersValue == gameManager.mainPlayer || !playersValue.indicator.activeSelf) continue;
                 if (!(Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE) ||
                     !(Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)) continue;
                 ok = false;
@@ -335,28 +353,28 @@ public class GameControllerMain : MonoBehaviour
         // Apply
         player.indicatorPosition = targetPos;
 
-        if (player.indicator.enabled) return;
+        if (player.indicator.activeSelf) return;
         // Set initial indicator position
-        player.indicator.rectTransform.anchoredPosition = player.indicatorPosition;
-        player.indicator.enabled = true;
+        player.rectTransform.anchoredPosition = player.indicatorPosition;
+        player.indicator.SetActive(true);
     }
 
     void MoveIndicators()
     {
         foreach (var player in gameManager.players.Values)
         {
-            if (player.indicator.rectTransform.anchoredPosition == player.indicatorPosition) continue;
-            var distance = player.indicatorPosition - player.indicator.rectTransform.anchoredPosition;
+            if (player.rectTransform.anchoredPosition == player.indicatorPosition) continue;
+            var distance = player.indicatorPosition - player.rectTransform.anchoredPosition;
             if (distance.magnitude <= indicatorMoveSpeed)
             {
-                player.indicator.rectTransform.anchoredPosition = player.indicatorPosition;
+                player.rectTransform.anchoredPosition = player.indicatorPosition;
             }
             else
             {
                 Vector2 move = distance;
                 move.Normalize();
                 move *= indicatorMoveSpeed;
-                player.indicator.rectTransform.anchoredPosition += move;
+                player.rectTransform.anchoredPosition += move;
             }
         }
     }

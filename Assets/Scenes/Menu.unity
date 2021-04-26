@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 355701989}
   - component: {fileID: 355701988}
   m_Layer: 5
-  m_Name: InputField_GameID (1)
+  m_Name: InputField_PlayerName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -826,8 +826,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GameControllerLobby, Assembly-CSharp
+      - m_Target: {fileID: 1845216350}
+        m_TargetAssemblyTypeName: GameControllerMenu, Assembly-CSharp
         m_MethodName: OnClick_PlayerIcon
         m_Mode: 1
         m_Arguments:
@@ -858,7 +858,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8bc810baa6f6d9e7e846f2d8e048b828, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 916971a69a8d5b283b60eda522490f89, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1448,8 +1448,25 @@ MonoBehaviour:
   buttonJoin: {fileID: 1303958599}
   inputFieldGameID: {fileID: 1477588451}
   imagePlayerIcon: {fileID: 1051643067}
-  inputFieldPlayerName: {fileID: 0}
-  playerSprites: []
+  inputFieldPlayerName: {fileID: 355701986}
+  playerSprites:
+  - {fileID: 21300000, guid: 916971a69a8d5b283b60eda522490f89, type: 3}
+  - {fileID: 21300000, guid: 4f57d795ca1e73a69b8370820cf462d7, type: 3}
+  - {fileID: 21300000, guid: 0261e625e25fde8bdb5d9adb0601af12, type: 3}
+  - {fileID: 21300000, guid: 96dd70302ac1494d0b935672ce45de6d, type: 3}
+  - {fileID: 21300000, guid: dc73c3be407593f9aa3599191cf3f6d2, type: 3}
+  - {fileID: 21300000, guid: ef7e7e7217513327e98186925cbbdad7, type: 3}
+  - {fileID: 21300000, guid: 99b7d6568d27f1f8d832ed6e04fddb6f, type: 3}
+  - {fileID: 21300000, guid: db3c208f7d7effc8e8d782b9436f7738, type: 3}
+  - {fileID: 21300000, guid: cc2d68d64f1443e11b98a26c65100daf, type: 3}
+  - {fileID: 21300000, guid: 27cbb91a4527c1d17851bef8d1f6b45f, type: 3}
+  - {fileID: 21300000, guid: ae52f4985486f3778880ba0a708a63e0, type: 3}
+  - {fileID: 21300000, guid: e5cb6aeff8e97527587304a8ad0cd813, type: 3}
+  - {fileID: 21300000, guid: 9fec20af0d49f6437857c1fbe69f8c0e, type: 3}
+  - {fileID: 21300000, guid: 886915c06ca40d44699ba3816b03e9fb, type: 3}
+  - {fileID: 21300000, guid: b141bff385febb9f0b90684369493da7, type: 3}
+  - {fileID: 21300000, guid: b1c0f6d91c1f88bb980a34fb354e2d95, type: 3}
+  - {fileID: 21300000, guid: 8bc810baa6f6d9e7e846f2d8e048b828, type: 3}
 --- !u!4 &1845216351
 Transform:
   m_ObjectHideFlags: 0
@@ -1591,12 +1608,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainPlayer:
-    button: {fileID: 0}
     indicator: {fileID: 0}
+    rectTransform: {fileID: 0}
     name: 
     spriteNumber: 0
     webId: 
-  isTelling: 0
+  myFacts:
+  - 
+  - 
+  - 
+  currentFacts:
+  - 
+  - 
+  - 
+  falseFactPosition: -1
+  currentTeller: 
 --- !u!1 &1976205846
 GameObject:
   m_ObjectHideFlags: 0
