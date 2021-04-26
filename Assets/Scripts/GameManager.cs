@@ -8,9 +8,12 @@ public class GameManager : MonoBehaviour
     private static GameManager s_Instance = null;
 
     // Variables
-    private int numberPlayers;
     private string gameID;
     public Player mainPlayer = new Player();
+    public bool isTelling = false;
+    //Sorted list of players, with sorting should have the same order for all players.
+    public SortedDictionary<string, Player> players = new SortedDictionary<string, Player>();
+    // public int maxPlayers = 1;
 
     void Awake()
     {
@@ -19,9 +22,6 @@ public class GameManager : MonoBehaviour
         {
             s_Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            // Initialization code
-            numberPlayers = 1;
         }
         else
         {
@@ -29,13 +29,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Set_numberPlayers(int value)
+    //Adds a new Player iff we dont already have them.
+    public void Add_PLayer(Player newPlayer)
     {
-        numberPlayers = value;
+        if (!players.ContainsKey(newPlayer.webId))
+        {
+            players.Add(newPlayer.webId, newPlayer);
+            //Can log here that we got a new player
+        }
     }
     public int Get_numberPlayers()
     {
-        return numberPlayers;
+        return players.Count;
     }
     public void Set_gameID(string value)
     {

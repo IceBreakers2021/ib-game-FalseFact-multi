@@ -19,6 +19,14 @@ mergeInto(LibraryManager.library, {
     ReactUnityWebGL.Get_Web_Id();
    },
    
+   Web_Log : function(line){
+    ReactUnityWebGL.Web_Log(line);
+   },
+   
+   RequestChannelPlayers : function(){
+     ReactUnityWebGL.RequestChannelPlayers();    
+   },
+   
    End_Round: function () {
      ReactUnityWebGL.End_Round();
    },

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -9,22 +10,27 @@ public class GameControllerMenu : MonoBehaviour
 {
     // Object for handling variables across scenes
     public GameManager gameManager;
-
-    public GameObject buttonCreate;
+    
     public GameObject buttonJoin;
     public GameObject inputFieldGameID;
+    
+    public GameObject imagePlayerIcon;
+    
+    public GameObject inputFieldPlayerName;
+    public Sprite[] playerSprites;
 
     // Variables
-    private int maxNumberPlayers;
+    //private int maxNumberPlayers;
     private string gameID_input;
+    private int spriteNumber;
+    private string playerName;
+    private string webId;
+
 
     // Start is called before the first frame update
     void Start()
     {
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
-        maxNumberPlayers = 5;
-        gameManager.Set_numberPlayers(maxNumberPlayers);
-        // Ask for number of players in the game.
     }
 
     // Update is called once per frame
@@ -37,32 +43,84 @@ public class GameControllerMenu : MonoBehaviour
     {
         // Initializations
         gameID_input = "";
+        playerName = "";
     }
-
-    void Go_To_Lobby()
-    {
-        if (gameID_input == "") return;
-        //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
-        gameManager.Set_gameID(gameID_input); // Sets the gameID for Unity
-        Set_Lobby(gameID_input); // Sets the gameID for the websocket channel
-        SceneManager.LoadScene(sceneName: "Lobby");
-    }
-
-    public void OnClick_Create()
-    {
-        Go_To_Lobby(); //TODO: Could create a new id.
-    }
-
+    
     public void OnClick_Join()
     {
-        Go_To_Lobby();
+        if (playerName == "")
+        {
+            Debug.Log("No player name");
+            Web_Log("No player name");
+            return;
+        }
+        
+        if (gameID_input == "")
+        {
+            Debug.Log("No game id");
+            Web_Log("No game id");
+            return;
+        }
+
+        //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
+        //TODO : Feedback to user that they need a player name.
+        gameManager.Set_gameID(gameID_input); // Sets the gameID for Unity
+        Get_Web_Id(); // Aks react to call Set_Web_Id
+    }
+    
+    //A little ugly, but we will join after getting the web id
+    public void Set_Web_Id(string web_id)
+    {
+        webId = web_id;
+        gameManager.mainPlayer = new Player(playerName, spriteNumber, webId);
+        gameManager.players.Add(webId, gameManager.mainPlayer);
+        Set_Lobby(gameID_input); // Sets the channel for the websocket channel
+        SceneManager.LoadScene(sceneName: "MakeFacts");
+    }
+    
+    public void OnClick_PlayerIcon()
+    {
+        // Get current player icon number
+        int sprite_nr_current = -1; // -1 if no known icon
+        for (int i = 0; i < playerSprites.Length; i++)
+        {
+            if (imagePlayerIcon.GetComponent<Image>().sprite == playerSprites[i])
+            {
+                sprite_nr_current = i;
+                break;
+            }
+        }
+
+        // Get next free player icon number
+        int sprite_nr = 0;
+        if (sprite_nr_current < playerSprites.Length - 1)
+        {
+            sprite_nr = sprite_nr_current + 1;
+        }
+
+        // sprite_nr = Random.Range(0, playerSprites.Length);
+        // Change player icon
+        spriteNumber = sprite_nr;
+        imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[sprite_nr];
     }
 
+    
     public void OnEndEdit_GameID(string value)
     {
         gameID_input = value;
     }
+    
+    public void OnEndEdit_PlayerName(string value)
+    {
+        playerName = value;
+    }
 
     [DllImport("__Internal")]
     private static extern void Set_Lobby(string _channelName);
+    
+    [DllImport("__Internal")]
+    private static extern void Get_Web_Id();
+    
+    [DllImport("__Internal")]
+    private static extern void Web_Log(string line);
 }

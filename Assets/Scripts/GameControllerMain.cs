@@ -30,7 +30,14 @@ public class GameControllerMain : MonoBehaviour
     private static extern void Create_List(string factTrue1, string factTrue2, string falseFact, int falsePosition);
 
     [DllImport("__Internal")]
+    private static extern void RequestChannelPlayers();
+    
+    [DllImport("__Internal")]
     private static extern void End_Round();
+    
+    [DllImport("__Internal")]
+    private static extern void Join_Game(string playerName, int avatarId);
+
     
     private GameManager gameManager; // Object for handling variables across scenes
     public GameObject buttonConfirm;
@@ -95,7 +102,8 @@ public class GameControllerMain : MonoBehaviour
 
         // Disable help text
         textInstructions.enabled = false;
-
+        //TODO : Lobby Needs to ask for other players on this channel.
+        RequestChannelPlayers();
         // Go into first state
         GotoState_Input();
     }
@@ -470,10 +478,20 @@ public class GameControllerMain : MonoBehaviour
         SelectFact(int.Parse(parameters[0]), int.Parse(parameters[1]));
     }
 
-    //This will need to be added to Lobby and Main Controller.
-    public void OnPlayerJoins()
+    //From javascript, adds new player to the dictionary of known players, according to their web id.
+    public void OnPlayer_Joins(string input)
     {
-        
+        //parameters, split to get 3 values, name, sprite, webid
+        string[] parameters = input.Split(',');
+        Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[2]);
+        gameManager.Add_PLayer(newPlayer);
+    }
+
+    //Another client has joined the channel, and wants to know the list of players in the world.
+    public void OnRequest_Players()
+    {
+        //Easiest is to just resend the Join_Game message
+        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
     }
     
     public void OnClick_Help()
