@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     // Variables
     private string gameID;
     public Player mainPlayer = new Player();
+    //First fact is always the false one.
+    public string[] myFacts = new string[3];
     public bool isTelling = false;
     //Sorted list of players, with sorting should have the same order for all players.
     public SortedDictionary<string, Player> players = new SortedDictionary<string, Player>();

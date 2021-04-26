@@ -5,7 +5,6 @@ using UnityEngine.UI;
 [System.Serializable]
 public class Player
 {
-    public Button button;
     //TODO : Need to show player indicator // color.
     public Image indicator;
     public string name;
@@ -15,7 +14,7 @@ public class Player
     //public List facts (false, true, true)
 
     [System.NonSerialized]
-    public int selectedFact;
+    public int selectedFact = -1;
     [System.NonSerialized]
     public Vector2 indicatorPosition;
 

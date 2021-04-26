@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,10 +8,11 @@ using UnityEngine.UI;
 
 public class GameControllerLobby : MonoBehaviour
 {
+    [DllImport("__Internal")]
+    private static extern void Join_Game(string playerName, int avatarId);
+    
     private GameManager gameManager;
-
     public GameObject buttonPlay;
-
     // Variables
     private string gameID;
     
@@ -25,19 +27,36 @@ public class GameControllerLobby : MonoBehaviour
         {
             gameID = gameManager.Get_gameID();
         }
-        // Other initializations
-    }
+        Debug.Log(gameManager.myFacts);
 
-    //TODO: Handle facts, saving them in game manager, etc. 
+        // Other initializations
+        //TODO : Would like to have the channel name a the top of the page.
+        //TODO: Have some text that tells them what to do, i.e. that they should have facts about themselves.
+    }
     
     public void OnClick_Play()
     {
-        // TODO: Sprite / Color selection and propagation to other people.
+        //TODO, make this button not interactable until they have filled in the facts, 
+        // Have feedback when they try, to remind them they need to fill in the facts.
+        if (gameManager.myFacts.Any(fact => fact == ""))
+        {
+            return; // If any fact is not filled, don't allow th play button to work.
+        }
         // Sends along all necessary info for other clients to add this player to their game
         Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
         SceneManager.LoadScene(sceneName: "MainGame");
     }
     
-    [DllImport("__Internal")]
-    private static extern void Join_Game(string playerName, int avatarId);
+    public void OnEndEdit_True1(string value)
+    {
+        gameManager.myFacts[2] = value;
+    }
+    public void OnEndEdit_True2(string value)
+    {
+        gameManager.myFacts[1] = value;
+    }
+    public void OnEndEdit_False1(string value)
+    {
+        gameManager.myFacts[0] = value;
+    }
 }

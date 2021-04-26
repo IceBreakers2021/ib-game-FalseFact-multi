@@ -89,7 +89,6 @@ public class GameControllerMain : MonoBehaviour
         // Initialize all players as disabled
         for (int i = 0; i < player.Length; i++)
         {
-            player[i].button.interactable = false;
             player[i].indicator.enabled = false;
             player[i].selectedFact = 0;
             player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
@@ -125,7 +124,6 @@ public class GameControllerMain : MonoBehaviour
 
         for (int i = 0; i < player.Length; i++)
         {
-            player[i].button.interactable = false;
             player[i].indicator.enabled = false;
             player[i].selectedFact = 0;
             player[i].indicatorPosition = player[i].indicator.rectTransform.anchoredPosition;
@@ -144,7 +142,6 @@ public class GameControllerMain : MonoBehaviour
 
         for (int i = 0; i < player.Length; i++)
         {
-            player[i].button.interactable = true;
             player[i].selectedFact = 0;
         }
         SetActive_InputFields(false);
@@ -165,7 +162,6 @@ public class GameControllerMain : MonoBehaviour
 
         for (int i = 0; i < player.Length; i++)
         {
-            player[i].button.interactable = false;
             player[i].indicator.enabled = true;
         }
         SetActive_InputFields(false);
@@ -440,18 +436,6 @@ public class GameControllerMain : MonoBehaviour
         }
     }
 
-    public void OnEndEdit_True1(string value)
-    {
-        factTrue1 = value;
-    }
-    public void OnEndEdit_True2(string value)
-    {
-        factTrue2 = value;
-    }
-    public void OnEndEdit_False1(string value)
-    {
-        factFalse1 = value;
-    }
 
     public void OnClick_Fact1()
     {
