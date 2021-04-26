@@ -80,7 +80,7 @@ public class GameControllerLobby : MonoBehaviour
     //Parameters should be : webid, falseFactPosition, facts
     public void SetCurrentTeller(string inputParams)
     {
-        if (!gameManager.isTelling())
+        if (gameManager.isTelling())
         {
             Debug.Log("Current teller ignoring setCurrentTeller call");
             return;
