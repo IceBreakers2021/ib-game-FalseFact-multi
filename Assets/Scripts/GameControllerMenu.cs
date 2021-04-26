@@ -50,22 +50,23 @@ public class GameControllerMenu : MonoBehaviour
     {
         if (playerName == "")
         {
+            //TODO : Feedback to user that they need a player name.
             Debug.Log("No player name");
-            Web_Log("No player name");
+            //Web_Log("No player name");
             return;
         }
         
         if (gameID_input == "")
         {
+            //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
             Debug.Log("No game id");
-            Web_Log("No game id");
+            //Web_Log("No game id");
             return;
         }
-
-        //TODO : Feedback to user that they need a game id. I.e. set field colour to red.
-        //TODO : Feedback to user that they need a player name.
+        
         gameManager.Set_gameID(gameID_input); // Sets the gameID for Unity
-        Get_Web_Id(); // Aks react to call Set_Web_Id
+        Set_Lobby(gameID_input); // Sets the channel for the websocket channel
+        Get_Web_Id(); // May have to change order of operations here.
     }
     
     //A little ugly, but we will join after getting the web id
@@ -74,7 +75,6 @@ public class GameControllerMenu : MonoBehaviour
         webId = web_id;
         gameManager.mainPlayer = new Player(playerName, spriteNumber, webId);
         gameManager.players.Add(webId, gameManager.mainPlayer);
-        Set_Lobby(gameID_input); // Sets the channel for the websocket channel
         SceneManager.LoadScene(sceneName: "MakeFacts");
     }
     
