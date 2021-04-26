@@ -8,7 +8,7 @@ mergeInto(LibraryManager.library, {
    },
  
    Change_Choice: function (playerWebId, choice) {
-     ReactUnityWebGL.Change_Choice(Pointer_stringify(playerName), choice);
+     ReactUnityWebGL.Change_Choice(Pointer_stringify(playerWebId), choice);
    },
    
    Create_List: function (factTrue1, factTrue2, falseFact, falsePosition) {

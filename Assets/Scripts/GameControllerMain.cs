@@ -97,13 +97,7 @@ public class GameControllerMain : MonoBehaviour
 #elif UNITY_EDITOR == true
         Debug.Log("TODO: Fake players for testing.");
 #endif
-        GameObject playerIcon =
-            Instantiate(playerIconPrefab, new Vector3(indicatorMarginStart + indicatorMargin, 0, 0),
-                Quaternion.identity);
-        playerIcon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
-        playerIcon.GetComponent<Image>().sprite = playerSprites[gameManager.mainPlayer.spriteNumber];
-        gameManager.mainPlayer.setIndicator(playerIcon);
-        // gameManager.mainPlayer.
+        SetupSpriteForPlayer(gameManager.mainPlayer);
         //TODO : Any player initialization should be done when players join.
         // for (int i = 0; i < player.Length; i++)
         // {
@@ -116,6 +110,7 @@ public class GameControllerMain : MonoBehaviour
         if (gameManager.currentTeller == "")
         {
             SetupAsCurrentTeller();
+            OnRequest_CurrentTeller(); // Manually sending it here to others who are already making their facts.
             Debug.Log("Done setting up as teller");
         }
         else
@@ -438,11 +433,24 @@ public class GameControllerMain : MonoBehaviour
     public void OnPlayer_Joins(string input)
     {
         //parameters, split to get 3 values, name, sprite, webid
+        Debug.Log("New Player joined");
         string[] parameters = input.Split(',');
         Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[2]);
+        SetupSpriteForPlayer(newPlayer);
         gameManager.Add_PLayer(newPlayer);
     }
 
+    //Adds an indicator to the scene and to this player, based on player details.
+    public void SetupSpriteForPlayer(Player player)
+    {
+        //TODO: Display player name somehow on the canvas, maybe another prefab object. Could include score.
+        GameObject playerIcon =
+            Instantiate(playerIconPrefab, new Vector3(indicatorMarginStart + indicatorMargin, 0, 0),
+                Quaternion.identity);
+        playerIcon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
+        playerIcon.GetComponent<Image>().sprite = playerSprites[player.spriteNumber];
+        player.setIndicator(playerIcon);
+    }
     //Another client has joined the channel, and wants to know the list of players in the world.
     public void OnRequest_Players()
     {

@@ -76,19 +76,24 @@ public class GameControllerLobby : MonoBehaviour
     {
         gameManager.myFacts[0] = value;
     }
-    
+
     //Parameters should be : webid, falseFactPosition, facts
     public void SetCurrentTeller(string inputParams)
     {
         if (gameManager.isTelling())
         {
-            Debug.Log("Current teller ignoring setCurrentTeller call");
+            Debug.Log("-----------Current teller ignoring setCurrentTeller call");
             return;
         }
+        Debug.Log("-------Setting up the current teller");
+
         string[] parameters = inputParams.Split(',');
         gameManager.currentTeller = parameters[0];
         gameManager.falseFactPosition = int.Parse(parameters[1]);
-        parameters.CopyTo(gameManager.currentFacts, 2);
+        //Had an error, might be nicer way to do this, but am tired.
+        gameManager.currentFacts[0] = parameters[2];
+        gameManager.currentFacts[1] = parameters[3];
+        gameManager.currentFacts[2] = parameters[4];
     }
 
     public void OnRequest_CurrentTeller()
@@ -98,5 +103,16 @@ public class GameControllerLobby : MonoBehaviour
         Debug.Log("We should not have gotten here...");
         Reply_Current_Teller(gameManager.mainPlayer.webId, gameManager.falseFactPosition, gameManager.currentFacts[0],
             gameManager.currentFacts[1], gameManager.currentFacts[2]);
+    }
+
+    //Empty methods kept for easier javascript code
+
+    public void OnPlayer_Joins(string input)
+    {
+        //Ignore for now, instead add from main after asking for it...
+    }
+    public void OnRequest_Players()
+    {
+        //Ignore for now, well send this message when we are ready.
     }
 }
