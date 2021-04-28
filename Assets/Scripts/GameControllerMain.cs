@@ -47,7 +47,6 @@ public class GameControllerMain : MonoBehaviour
 
     public GameObject buttonConfirm;
     public GameObject playerIconPrefab;
-    public Sprite[] playerSprites;
     public float indicatorMoveSpeed;
     public float indicatorMarginStart;
     public float indicatorMargin;
@@ -66,6 +65,7 @@ public class GameControllerMain : MonoBehaviour
     }
 
     State state;
+    private Sprite[] playerSprites;
     private string gameID;
     private GameManager gameManager; // Object for handling variables across scenes
     private const double TOLERANCE = 0.00001; //Floating point comparison
@@ -77,10 +77,12 @@ public class GameControllerMain : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
         gameID = "?";
+        playerSprites = null;
         // Set variables to inherited values from GameManager
         if (gameManager != null)
         {
             gameID = gameManager.Get_gameID();
+            playerSprites = gameManager.Get_playerSprites();
         }
         else
         {

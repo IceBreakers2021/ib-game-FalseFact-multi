@@ -15,10 +15,10 @@ public class GameControllerMenu : MonoBehaviour
     public GameObject inputFieldGameID;
     public GameObject imagePlayerIcon;
     public GameObject inputFieldPlayerName;
-    public Sprite[] playerSprites;
 
     // Variables
     //private int maxNumberPlayers;
+    private Sprite[] playerSprites;
     private string gameID_input;
     private int spriteNumber;
     private string playerName;
@@ -29,6 +29,7 @@ public class GameControllerMenu : MonoBehaviour
     void Start()
     {
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
+        playerSprites = gameManager.Get_playerSprites();
     }
 
     // Update is called once per frame
