@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     private static GameManager s_Instance = null;
 
     // Variables
+    public Sprite[] playerSprites;
     private string gameID;
     public Player mainPlayer;
     //First fact is always the false one.
@@ -43,6 +44,11 @@ public class GameManager : MonoBehaviour
             players.Add(newPlayer.webId, newPlayer);
             //Can log here that we got a new player
         }
+    }
+
+    public Sprite[] Get_playerSprites()
+    {
+        return playerSprites;
     }
     public int Get_numberPlayers()
     {

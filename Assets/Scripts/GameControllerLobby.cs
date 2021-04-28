@@ -23,6 +23,7 @@ public class GameControllerLobby : MonoBehaviour
     public GameObject buttonPlay;
 
     // Variables
+    private Sprite[] playerSprites;
     private string gameID;
 
     void Awake()
@@ -34,10 +35,12 @@ public class GameControllerLobby : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
         // Define default values (in case GameManager does not exist, e.g. when scene is launched without previous scene)
         gameID = "?";
+        playerSprites = null;
         // Set variables to inherited values from GameManager
         if (gameManager != null)
         {
             gameID = gameManager.Get_gameID();
+            playerSprites = gameManager.Get_playerSprites();
         }
 
         // Other initializations
