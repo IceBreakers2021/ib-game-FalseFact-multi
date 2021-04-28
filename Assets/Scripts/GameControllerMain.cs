@@ -134,7 +134,7 @@ public class GameControllerMain : MonoBehaviour
 
     void Update()
     {
-        MoveIndicators(); //Currently broken
+        MoveIndicators();
     }
 
     void GotoState_Guess()
@@ -432,7 +432,7 @@ public class GameControllerMain : MonoBehaviour
     {
         //parameters, split to get 3 values, name, sprite, webid
         Debug.Log("New Player joined");
-        string[] parameters = input.Split(',');
+        string[] parameters = input.Split('|');
         Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[2]);
         SetupSpriteForPlayer(newPlayer);
         gameManager.Add_PLayer(newPlayer);
@@ -476,7 +476,16 @@ public class GameControllerMain : MonoBehaviour
         Reply_Current_Teller(gameManager.mainPlayer.webId, gameManager.falseFactPosition, gameManager.currentFacts[0],
             gameManager.currentFacts[1], gameManager.currentFacts[2]);
     }
-    
+
+    public void OnToldEndOfRound()
+    {
+        
+        GotoState_Result();
+        //This is for everyone who is not the current teller
+        //if you are next in line, you get to click next button, which should trigger your facts to be sent to
+        //everyone.
+        //SetCurrentTeller
+    }
     //TODO: Handle on End Round
     //TODO: Only allow the current Teller to click the confirm button
     //TODO: Remove teller from chosing options
