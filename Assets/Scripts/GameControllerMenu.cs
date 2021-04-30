@@ -29,6 +29,7 @@ public class GameControllerMenu : MonoBehaviour
     void Start()
     {
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
+        //playerSprites[0] = Resources.Load<Sprite>("Sprites/PlayerIcons/default-none");
         playerSprites = gameManager.Get_playerSprites();
     }
 
