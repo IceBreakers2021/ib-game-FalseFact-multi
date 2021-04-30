@@ -10,14 +10,18 @@ public class GameManager : MonoBehaviour
     // Variables
     public Sprite[] playerSprites;
     private string gameID;
+
     public Player mainPlayer;
+
     //First fact is always the false one.
     public string[] myFacts = new string[3];
     public string[] currentFacts = new string[3];
 
     public int falseFactPosition = -1;
+
     //Who is revealing their facts.
     public string currentTeller = "";
+
     //Sorted list of players, with sorting should have the same order for all players.
     public SortedDictionary<string, Player> players = new SortedDictionary<string, Player>();
     // public int maxPlayers = 1;
@@ -50,14 +54,17 @@ public class GameManager : MonoBehaviour
     {
         return playerSprites;
     }
+
     public int Get_numberPlayers()
     {
         return players.Count;
     }
+
     public void Set_gameID(string value)
     {
         gameID = value;
     }
+
     public string Get_gameID()
     {
         return gameID;
@@ -67,5 +74,18 @@ public class GameManager : MonoBehaviour
     {
         return currentTeller == mainPlayer.webId;
     }
-}
 
+    public Player getNextTeller()
+    {
+        foreach (KeyValuePair<string, Player> keyVal in players)
+        {
+            var player = keyVal.Value;
+            if (player.hastTold == false)
+            {
+                return player;
+            }
+        }
+
+        return mainPlayer;
+    }
+}

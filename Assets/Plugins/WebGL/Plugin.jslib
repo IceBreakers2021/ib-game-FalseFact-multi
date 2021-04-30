@@ -16,7 +16,11 @@ mergeInto(LibraryManager.library, {
    },
    
    Web_Log : function(line){
-    ReactUnityWebGL.Web_Log(line);
+    ReactUnityWebGL.Web_Log(Pointer_stringify(line));
+   },
+   
+   Tell_Next_Round : function(playerId){
+    ReactUnityWebGL.Tell_Next_Round(Pointer_stringify(playerId));
    },
    
    RequestChannelPlayers : function(){

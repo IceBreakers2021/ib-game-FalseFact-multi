@@ -28,6 +28,9 @@ public class GameControllerMain : MonoBehaviour
     private static extern void Change_Choice(string playerWebId, int choice);
 
     [DllImport("__Internal")]
+    private static extern void Tell_Next_Round(string playerWebId);
+    
+    [DllImport("__Internal")]
     private static extern void RequestChannelPlayers();
 
     [DllImport("__Internal")]
@@ -381,14 +384,24 @@ public class GameControllerMain : MonoBehaviour
                 if (ok)
                 {
                     End_Round(); // Sends message to everyone to go to result stage.
-                    
+                    gameManager.mainPlayer.hastTold = true;
                     GotoState_Result();
                 }
 
                 break;
             case State.Result:
-                //TODO: change the activePlayer (current Teller) and mark that the current player has told their stuff.
-                GotoState_Guess();
+                //The current teller
+                var nextTeller = gameManager.getNextTeller();
+                if (nextTeller == gameManager.mainPlayer)
+                {
+                    Debug.Log("End of game!");
+                }
+                else
+                {
+                    Tell_Next_Round(nextTeller.webId);
+                    gameManager.currentTeller = nextTeller.webId;
+                    GotoState_Guess();
+                }
                 break;
             default:
                 Debug.Log("#### Unknown game state!");
@@ -489,6 +502,21 @@ public class GameControllerMain : MonoBehaviour
         //if you are next in line, you get to click next button, which should trigger your facts to be sent to
         //everyone.
         //SetCurrentTeller
+    }
+    
+    //Told by others that the next round is beginning, given webID by the last currentTeller
+    public void OnToldNextRound(string webId)
+    {
+        if (gameManager.mainPlayer.webId == webId)
+        {
+            SetupAsCurrentTeller();
+            OnRequest_CurrentTeller(); // Manually sending it here to others who are already making their facts.
+        }
+        else
+        {
+            SetupAsPlayer();
+        }
+        GotoState_Guess();
     }
     //TODO: Handle on End Round
     //TODO: Only allow the current Teller to click the confirm button
