@@ -967,7 +967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonConfirm: {fileID: 1168786402}
-  playerIconPrefab: {fileID: 7645162078037672557, guid: 7c84e3b7772516afd966ae0be5ea3e97, type: 3}
+  playerIndicatorPrefab: {fileID: 7645162078037672557, guid: 7c84e3b7772516afd966ae0be5ea3e97, type: 3}
   indicatorMoveSpeed: 10
   indicatorMarginStart: 220
   indicatorMargin: 60

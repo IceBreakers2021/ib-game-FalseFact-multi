@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+
 
 public class GameControllerMenu : MonoBehaviour
 {
@@ -31,6 +33,10 @@ public class GameControllerMenu : MonoBehaviour
         // Initialize GameManager variables in Start() instead of Awake() so that GameManager has time to initialize.
         //playerSprites[0] = Resources.Load<Sprite>("Sprites/PlayerIcons/default-none");
         playerSprites = gameManager.Get_playerSprites();
+
+        // Select random starting player icon
+        spriteNumber = Random.Range(0, playerSprites.Length);
+        imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[spriteNumber];
     }
 
     // Update is called once per frame

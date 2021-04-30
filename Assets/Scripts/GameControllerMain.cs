@@ -46,7 +46,7 @@ public class GameControllerMain : MonoBehaviour
         string true2);
 
     public GameObject buttonConfirm;
-    public GameObject playerIconPrefab;
+    public GameObject playerIndicatorPrefab;
     public float indicatorMoveSpeed;
     public float indicatorMarginStart;
     public float indicatorMargin;
@@ -451,7 +451,7 @@ public class GameControllerMain : MonoBehaviour
     {
         //TODO: Display player name somehow on the canvas, maybe another prefab object. Could include score.
         GameObject playerIcon =
-            Instantiate(playerIconPrefab, new Vector3(indicatorMarginStart + indicatorMargin, 0, 0),
+            Instantiate(playerIndicatorPrefab, new Vector3(indicatorMarginStart + indicatorMargin, 0, 0),
                 Quaternion.identity);
         playerIcon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
         playerIcon.GetComponent<Image>().sprite = playerSprites[player.spriteNumber];

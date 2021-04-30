@@ -22,6 +22,8 @@ public class GameControllerLobby : MonoBehaviour
 
     public GameObject buttonPlay;
     public GameObject textTitle;
+    public GameObject imagePlayerIcon;
+    public GameObject textPlayerName;
 
     // Variables
     private Sprite[] playerSprites;
@@ -42,6 +44,9 @@ public class GameControllerLobby : MonoBehaviour
         {
             gameID = gameManager.Get_gameID();
             playerSprites = gameManager.Get_playerSprites();
+
+            imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[gameManager.mainPlayer.spriteNumber];
+            textPlayerName.GetComponent<Text>().text = gameManager.mainPlayer.name;
         }
 
         // Other initializations
