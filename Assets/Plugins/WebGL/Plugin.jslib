@@ -3,16 +3,12 @@ mergeInto(LibraryManager.library, {
         ReactUnityWebGL.Set_Lobby(Pointer_stringify(_channelName));
    },
    
-   Join_Game: function (playerName, avatarId) {
-     ReactUnityWebGL.Join_Game(Pointer_stringify(playerName), avatarId);
+   Join_Game: function (playerName, avatarId, hasTold) {
+     ReactUnityWebGL.Join_Game(Pointer_stringify(playerName), avatarId, hasTold);
    },
  
    Change_Choice: function (playerWebId, choice) {
      ReactUnityWebGL.Change_Choice(Pointer_stringify(playerWebId), choice);
-   },
-   
-   Create_List: function (factTrue1, factTrue2, falseFact, falsePosition) {
-     ReactUnityWebGL.Create_List(factTrue1, factTrue2, falseFact, falsePosition);
    },
   
    Get_Web_Id : function() {

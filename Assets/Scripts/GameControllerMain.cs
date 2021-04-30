@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -30,17 +28,14 @@ public class GameControllerMain : MonoBehaviour
     private static extern void Change_Choice(string playerWebId, int choice);
 
     [DllImport("__Internal")]
-    private static extern void Create_List(string factTrue1, string factTrue2, string falseFact, int falsePosition);
-
-    [DllImport("__Internal")]
     private static extern void RequestChannelPlayers();
 
     [DllImport("__Internal")]
     private static extern void End_Round();
 
     [DllImport("__Internal")]
-    private static extern void Join_Game(string playerName, int avatarId);
-    
+    private static extern void Join_Game(string playerName, int avatarId, int hasTold);
+
     [DllImport("__Internal")]
     private static extern void Reply_Current_Teller(string webid, int falsePosition, string false1, string true1,
         string true2);
@@ -393,6 +388,7 @@ public class GameControllerMain : MonoBehaviour
                 if (ok)
                 {
                     End_Round(); // Sends message to everyone to go to result stage.
+
                     GotoState_Result();
                 }
 
@@ -441,10 +437,11 @@ public class GameControllerMain : MonoBehaviour
     //From javascript, adds new player to the dictionary of known players, according to their web id.
     public void OnPlayer_Joins(string input)
     {
-        //parameters, split to get 4 values, name (string), sprite (string), webid (string), hasTold (int)
+        //parameters, split to get 4 values, name (string), sprite (string),  hasTold (int), webid (string),
         Debug.Log("New Player joined");
         string[] parameters = input.Split('|');
-        Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[2]);
+        bool hasTold = int.Parse(parameters[2]) == 1;
+        Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[3], hasTold);
         SetupSpriteForPlayer(newPlayer);
         gameManager.Add_PLayer(newPlayer);
     }
@@ -460,17 +457,20 @@ public class GameControllerMain : MonoBehaviour
         playerIcon.GetComponent<Image>().sprite = playerSprites[player.spriteNumber];
         player.setIndicator(playerIcon);
     }
+
     //Another client has joined the channel, and wants to know the list of players in the world.
     public void OnRequest_Players()
     {
         //Easiest is to just resend the Join_Game message
-        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
+        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber,
+            gameManager.mainPlayer.hasToldInt());
     }
 
     public void OnClick_Help()
     {
         textInstructions.enabled = !textInstructions.enabled;
     }
+
     public void SetCurrentTeller(string inputParams)
     {
         string[] parameters = inputParams.Split('|');
@@ -490,7 +490,6 @@ public class GameControllerMain : MonoBehaviour
 
     public void OnToldEndOfRound()
     {
-        
         GotoState_Result();
         //This is for everyone who is not the current teller
         //if you are next in line, you get to click next button, which should trigger your facts to be sent to

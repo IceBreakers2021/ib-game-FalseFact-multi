@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class GameControllerLobby : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void Join_Game(string playerName, int avatarId);
+    private static extern void Join_Game(string playerName, int avatarId, int hasTold);
 
     [DllImport("__Internal")]
     private static extern void Ask_For_Current_Teller();
@@ -67,7 +67,7 @@ public class GameControllerLobby : MonoBehaviour
         // Sends along all necessary info for other clients to add this player to their game
         //TODO: Get the current teller, then join game
 #if (UNITY_WEBGL == true && UNITY_EDITOR == false)
-        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber);
+        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber, gameManager.mainPlayer.hasToldInt());
 #endif
         SceneManager.LoadScene(sceneName: "MainGame");
     }
@@ -95,6 +95,7 @@ public class GameControllerLobby : MonoBehaviour
             Debug.Log("-----------Current teller ignoring setCurrentTeller call");
             return;
         }
+
         Debug.Log("-------Setting up the current teller");
 
         string[] parameters = inputParams.Split('|');
@@ -121,10 +122,12 @@ public class GameControllerLobby : MonoBehaviour
     {
         //Ignore for now, instead add from main after asking for it...
     }
+
     public void OnRequest_Players()
     {
         //Ignore for now, well send this message when we are ready.
     }
+
     public void OnToldEndOfRound()
     {
         //Ignore for now, new players should not care

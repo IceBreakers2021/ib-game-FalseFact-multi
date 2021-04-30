@@ -33,5 +33,9 @@ public class Player
         rectTransform = indicator.GetComponent<RectTransform>();
     }
 
+    public int hasToldInt()
+    {
+        return hastTold ? 1 : 0;
+    }
     // public Player(){}
 }

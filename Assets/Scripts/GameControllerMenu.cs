@@ -83,7 +83,7 @@ public class GameControllerMenu : MonoBehaviour
     public void Set_Web_Id(string web_id)
     {
         webId = web_id;
-        gameManager.mainPlayer = new Player(playerName, spriteNumber, webId);
+        gameManager.mainPlayer = new Player(playerName, spriteNumber, webId, false);
         gameManager.players.Add(webId, gameManager.mainPlayer);
         SceneManager.LoadScene(sceneName: "MakeFacts");
     }
