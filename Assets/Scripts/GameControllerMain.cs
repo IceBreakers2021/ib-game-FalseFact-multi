@@ -150,6 +150,7 @@ public class GameControllerMain : MonoBehaviour
         foreach (var player in gameManager.players.Values)
         {
             player.indicator.SetActive(false);
+            player.selectedFact = -1; //resetting for next round
         }
 
         Debug.Log("Going into gotoStateGuess");
