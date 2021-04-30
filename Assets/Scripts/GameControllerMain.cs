@@ -49,6 +49,7 @@ public class GameControllerMain : MonoBehaviour
     public GameObject buttonFact1;
     public GameObject buttonFact2;
     public GameObject buttonFact3;
+    public GameObject confirmButton;
     public FactColors factColors;
     public Text textInstructions;
     public InstructionTexts instructionTexts;
@@ -128,6 +129,7 @@ public class GameControllerMain : MonoBehaviour
         gameManager.currentTeller = gameManager.mainPlayer.webId;
         gameManager.falseFactPosition = Random.Range(1, 4);
         gameManager.myFacts.CopyTo(gameManager.currentFacts, 0);
+        confirmButton.SetActive(true);
     }
 
     void SetupAsPlayer()
@@ -144,7 +146,6 @@ public class GameControllerMain : MonoBehaviour
     {
         Debug.Log("Going into gotoStateGuess");
         state = State.Guess;
-        SetActive_ButtonFacts(true);
         SetButtonInteractable_ButtonFacts(true);
         SetImageColor_ButtonFacts_revealed(false);
         SetImageAlpha_PlayerIndicatorStatus(false);
@@ -159,21 +160,13 @@ public class GameControllerMain : MonoBehaviour
     void GotoState_Result()
     {
         state = State.Result;
-        SetActive_ButtonFacts(true);
         SetButtonInteractable_ButtonFacts(false);
         SetImageColor_ButtonFacts_revealed(true);
         SetImageAlpha_PlayerIndicatorStatus(true);
 
         textInstructions.text = instructionTexts.result;
     }
-
-    void SetActive_ButtonFacts(bool toggle)
-    {
-        // Attention: GameObjects have to be active in order to be modified!
-        buttonFact1.SetActive(toggle);
-        buttonFact2.SetActive(toggle);
-        buttonFact3.SetActive(toggle);
-    }
+    
 
     void SetButtonInteractable_ButtonFacts(bool toggle)
     {
@@ -388,7 +381,7 @@ public class GameControllerMain : MonoBehaviour
                 if (ok)
                 {
                     End_Round(); // Sends message to everyone to go to result stage.
-
+                    
                     GotoState_Result();
                 }
 
@@ -490,6 +483,7 @@ public class GameControllerMain : MonoBehaviour
 
     public void OnToldEndOfRound()
     {
+        gameManager.players[gameManager.currentTeller].hastTold = true;
         GotoState_Result();
         //This is for everyone who is not the current teller
         //if you are next in line, you get to click next button, which should trigger your facts to be sent to

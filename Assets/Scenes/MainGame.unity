@@ -975,6 +975,7 @@ MonoBehaviour:
   buttonFact1: {fileID: 554765961}
   buttonFact2: {fileID: 510428648}
   buttonFact3: {fileID: 1166773616}
+  confirmButton: {fileID: 1168786402}
   factColors:
     neutralColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     trueColor: {r: 0.72156864, g: 1, b: 0.33333334, a: 1}
@@ -1231,7 +1232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1168786403
 RectTransform:
   m_ObjectHideFlags: 0
