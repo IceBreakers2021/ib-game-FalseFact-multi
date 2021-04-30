@@ -21,6 +21,7 @@ public class GameControllerLobby : MonoBehaviour
     private GameManager gameManager;
 
     public GameObject buttonPlay;
+    public GameObject textTitle;
 
     // Variables
     private Sprite[] playerSprites;
@@ -44,7 +45,8 @@ public class GameControllerLobby : MonoBehaviour
         }
 
         // Other initializations
-        //TODO : Would like to have the channel name a the top of the page.
+        textTitle.GetComponent<Text>().text = gameID;
+
         //TODO: Have some text that tells them what to do, i.e. that they should have facts about themselves.
     }
 

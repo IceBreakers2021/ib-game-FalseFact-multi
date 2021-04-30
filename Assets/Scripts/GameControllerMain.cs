@@ -57,6 +57,7 @@ public class GameControllerMain : MonoBehaviour
     public FactColors factColors;
     public Text textInstructions;
     public InstructionTexts instructionTexts;
+    public GameObject textTitle;
 
     enum State
     {
@@ -93,11 +94,16 @@ public class GameControllerMain : MonoBehaviour
 
         // Disable help text
         textInstructions.enabled = false;
+
+        // Other initializations
+        textTitle.GetComponent<Text>().text = gameID;
+
 #if (UNITY_WEBGL == true && UNITY_EDITOR == false)
         RequestChannelPlayers();
 #elif UNITY_EDITOR == true
         Debug.Log("TODO: Fake players for testing.");
 #endif
+
         SetupSpriteForPlayer(gameManager.mainPlayer);
         //TODO : Any player initialization should be done when players join.
         // for (int i = 0; i < player.Length; i++)
