@@ -132,4 +132,9 @@ public class GameControllerLobby : MonoBehaviour
     {
         //Ignore for now, new players should not care
     }
+
+    public void OnToldNextRound(string webId)
+    {
+        //Ignore for now, making facts does not care.
+    }
 }

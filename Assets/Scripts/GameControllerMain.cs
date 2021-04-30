@@ -29,7 +29,7 @@ public class GameControllerMain : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void Tell_Next_Round(string playerWebId);
-    
+
     [DllImport("__Internal")]
     private static extern void RequestChannelPlayers();
 
@@ -147,6 +147,11 @@ public class GameControllerMain : MonoBehaviour
 
     void GotoState_Guess()
     {
+        foreach (var player in gameManager.players.Values)
+        {
+            player.indicator.SetActive(false);
+        }
+
         Debug.Log("Going into gotoStateGuess");
         state = State.Guess;
         SetButtonInteractable_ButtonFacts(true);
@@ -169,7 +174,7 @@ public class GameControllerMain : MonoBehaviour
 
         textInstructions.text = instructionTexts.result;
     }
-    
+
 
     void SetButtonInteractable_ButtonFacts(bool toggle)
     {
@@ -380,7 +385,8 @@ public class GameControllerMain : MonoBehaviour
         {
             case State.Guess:
                 // Check if all have chosen a fact
-                var ok = gameManager.players.Values.All(player => player.selectedFact != -1);
+                var ok = gameManager.players.Values.All(player =>
+                    player.selectedFact != -1 || gameManager.mainPlayer == player);
                 if (ok)
                 {
                     End_Round(); // Sends message to everyone to go to result stage.
@@ -402,6 +408,7 @@ public class GameControllerMain : MonoBehaviour
                     gameManager.currentTeller = nextTeller.webId;
                     GotoState_Guess();
                 }
+
                 break;
             default:
                 Debug.Log("#### Unknown game state!");
@@ -483,6 +490,7 @@ public class GameControllerMain : MonoBehaviour
         gameManager.currentTeller = parameters[0];
         gameManager.falseFactPosition = int.Parse(parameters[1]);
         parameters.CopyTo(gameManager.currentFacts, 2);
+        SetUpButtonText();
     }
 
     public void OnRequest_CurrentTeller()
@@ -503,7 +511,7 @@ public class GameControllerMain : MonoBehaviour
         //everyone.
         //SetCurrentTeller
     }
-    
+
     //Told by others that the next round is beginning, given webID by the last currentTeller
     public void OnToldNextRound(string webId)
     {
@@ -516,6 +524,7 @@ public class GameControllerMain : MonoBehaviour
         {
             SetupAsPlayer();
         }
+
         GotoState_Guess();
     }
     //TODO: Handle on End Round
