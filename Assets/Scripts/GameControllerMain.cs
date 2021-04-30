@@ -410,16 +410,19 @@ public class GameControllerMain : MonoBehaviour
 
     public void OnClick_Fact1()
     {
+        if (gameManager.isTelling()) return;
         SelectFact(1, gameManager.mainPlayer);
     }
 
     public void OnClick_Fact2()
     {
+        if (gameManager.isTelling()) return;
         SelectFact(2, gameManager.mainPlayer);
     }
 
     public void OnClick_Fact3()
     {
+        if (gameManager.isTelling()) return;
         SelectFact(3, gameManager.mainPlayer);
     }
 
@@ -429,7 +432,7 @@ public class GameControllerMain : MonoBehaviour
     public void OnOtherPlayerSelect(string twoInts)
     {
         //Will get choice (int) and webId (string)
-        string[] parameters = twoInts.Split(',');
+        string[] parameters = twoInts.Split('|');
         //Can only take 1 parameter from Javascript, having to separate it into integers here.
         //Json may be more useful for more complicated inputs
         SelectFact(int.Parse(parameters[0]), gameManager.players[parameters[1]]);
@@ -438,7 +441,7 @@ public class GameControllerMain : MonoBehaviour
     //From javascript, adds new player to the dictionary of known players, according to their web id.
     public void OnPlayer_Joins(string input)
     {
-        //parameters, split to get 3 values, name, sprite, webid
+        //parameters, split to get 4 values, name (string), sprite (string), webid (string), hasTold (int)
         Debug.Log("New Player joined");
         string[] parameters = input.Split('|');
         Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[2]);
@@ -470,7 +473,7 @@ public class GameControllerMain : MonoBehaviour
     }
     public void SetCurrentTeller(string inputParams)
     {
-        string[] parameters = inputParams.Split(',');
+        string[] parameters = inputParams.Split('|');
         gameManager.currentTeller = parameters[0];
         gameManager.falseFactPosition = int.Parse(parameters[1]);
         parameters.CopyTo(gameManager.currentFacts, 2);

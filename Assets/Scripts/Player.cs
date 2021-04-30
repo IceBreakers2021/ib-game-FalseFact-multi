@@ -11,6 +11,7 @@ public class Player
     public string name;
     public int spriteNumber;
     public string webId;
+    public bool hastTold;
     //public List facts (false, true, true)
 
     [System.NonSerialized]
@@ -18,11 +19,12 @@ public class Player
     [System.NonSerialized]
     public Vector2 indicatorPosition;
 
-    public Player(string name, int spriteNumber,  string webId)
+    public Player(string name, int spriteNumber,  string webId, bool hastTold)
     {
         this.name = name;
         this.spriteNumber = spriteNumber;
         this.webId = webId;
+        this.hastTold = hastTold;
     }
 
     public void setIndicator(GameObject _indicator)

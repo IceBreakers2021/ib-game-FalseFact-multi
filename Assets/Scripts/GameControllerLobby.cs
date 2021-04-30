@@ -97,7 +97,7 @@ public class GameControllerLobby : MonoBehaviour
         }
         Debug.Log("-------Setting up the current teller");
 
-        string[] parameters = inputParams.Split(',');
+        string[] parameters = inputParams.Split('|');
         gameManager.currentTeller = parameters[0];
         gameManager.falseFactPosition = int.Parse(parameters[1]);
         //Had an error, might be nicer way to do this, but am tired.
@@ -124,5 +124,9 @@ public class GameControllerLobby : MonoBehaviour
     public void OnRequest_Players()
     {
         //Ignore for now, well send this message when we are ready.
+    }
+    public void OnToldEndOfRound()
+    {
+        //Ignore for now, new players should not care
     }
 }
