@@ -24,6 +24,8 @@ public class GameControllerLobby : MonoBehaviour
     public GameObject textTitle;
     public GameObject imagePlayerIcon;
     public GameObject textPlayerName;
+    public Text textInstructions;
+    public string[] instructionTexts;
 
     // Variables
     private Sprite[] playerSprites;
@@ -48,6 +50,10 @@ public class GameControllerLobby : MonoBehaviour
             imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[gameManager.mainPlayer.spriteNumber];
             textPlayerName.GetComponent<Text>().text = gameManager.mainPlayer.name;
         }
+
+        // Setup help text
+        textInstructions.text = instructionTexts[0];
+        textInstructions.enabled = false;
 
         // Other initializations
         textTitle.GetComponent<Text>().text = gameID;
@@ -85,6 +91,11 @@ public class GameControllerLobby : MonoBehaviour
     public void OnEndEdit_False1(string value)
     {
         gameManager.myFacts[0] = value;
+    }
+
+    public void OnClick_Help()
+    {
+        textInstructions.enabled = !textInstructions.enabled;
     }
 
     //Parameters should be : webid, falseFactPosition, facts

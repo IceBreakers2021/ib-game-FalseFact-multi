@@ -14,13 +14,6 @@ public class FactColors
     public Color falseColor;
 }
 
-[System.Serializable]
-public class InstructionTexts
-{
-    public string input;
-    public string guess;
-    public string result;
-}
 
 public class GameControllerMain : MonoBehaviour
 {
@@ -55,7 +48,7 @@ public class GameControllerMain : MonoBehaviour
     public GameObject confirmButton;
     public FactColors factColors;
     public Text textInstructions;
-    public InstructionTexts instructionTexts;
+    public string[] instructionTexts;
     public GameObject textTitle;
 
     enum State
@@ -162,7 +155,7 @@ public class GameControllerMain : MonoBehaviour
         // Organizes buttons based on falseFactPosition.
         SetUpButtonText();
 
-        textInstructions.text = instructionTexts.guess;
+        textInstructions.text = instructionTexts[0];
         Debug.Log("Done with gotoState");
     }
 
@@ -173,7 +166,7 @@ public class GameControllerMain : MonoBehaviour
         SetImageColor_ButtonFacts_revealed(true);
         SetImageAlpha_PlayerIndicatorStatus(true);
 
-        textInstructions.text = instructionTexts.result;
+        textInstructions.text = instructionTexts[1];
     }
 
 

@@ -982,11 +982,9 @@ MonoBehaviour:
     falseColor: {r: 0.99215686, g: 0.47058824, b: 0.47058824, a: 1}
   textInstructions: {fileID: 832705570}
   instructionTexts:
-    input: Select a person who fills in the facts. The others should look away until
-      he or she confirms!
-    guess: Discuss and vote for the fact you think is a lie. The person who filled
-      in the facts should defend ALL facts!
-    result: Discuss the results.
+  - Discuss and vote for the fact you think is a lie. The person who filled in the
+    facts should defend ALL facts!
+  - Discuss the results.
   textTitle: {fileID: 1223747814}
 --- !u!4 &1107053571
 Transform:
