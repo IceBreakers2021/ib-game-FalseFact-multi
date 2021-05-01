@@ -47,6 +47,8 @@ public class GameControllerMain : MonoBehaviour
     public GameObject buttonFact3;
     public GameObject confirmButton;
     public FactColors factColors;
+    public GameObject imagePlayerIconTeller;
+    public GameObject textPlayerNameTeller;
     public Text textInstructions;
     public string[] instructionTexts;
     public GameObject textTitle;
