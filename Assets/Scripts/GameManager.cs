@@ -88,4 +88,23 @@ public class GameManager : MonoBehaviour
 
         return mainPlayer;
     }
+
+    public void setCurrentTeller(string inputParams)
+    {
+        if (isTelling())
+        {
+            Debug.Log("-----------Current teller ignoring setCurrentTeller call");
+            return;
+        }
+
+        Debug.Log("-------Setting up the current teller");
+
+        string[] parameters = inputParams.Split('|');
+        currentTeller = parameters[0];
+        falseFactPosition = int.Parse(parameters[1]);
+        //Had an error, might be nicer way to do this, but am tired.
+        currentFacts[0] = parameters[2];
+        currentFacts[1] = parameters[3];
+        currentFacts[2] = parameters[4];
+    }
 }

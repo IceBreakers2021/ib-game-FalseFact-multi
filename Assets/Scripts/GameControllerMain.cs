@@ -488,21 +488,7 @@ public class GameControllerMain : MonoBehaviour
 
     public void SetCurrentTeller(string inputParams)
     {
-        if (gameManager.isTelling())
-        {
-            Debug.Log("-----------Current teller ignoring setCurrentTeller call");
-            return;
-        }
-
-        Debug.Log("-------Setting up the current teller");
-
-        string[] parameters = inputParams.Split('|');
-        gameManager.currentTeller = parameters[0];
-        gameManager.falseFactPosition = int.Parse(parameters[1]);
-        //Had an error, might be nicer way to do this, but am tired.
-        gameManager.currentFacts[0] = parameters[2];
-        gameManager.currentFacts[1] = parameters[3];
-        gameManager.currentFacts[2] = parameters[4];
+        gameManager.setCurrentTeller(inputParams);
         SetUpButtonText();
     }
 
