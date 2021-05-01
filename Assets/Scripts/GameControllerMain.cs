@@ -399,6 +399,7 @@ public class GameControllerMain : MonoBehaviour
             case State.Result:
                 //The current teller
                 var nextTeller = gameManager.getNextTeller();
+                confirmButton.SetActive(false);
                 if (nextTeller == gameManager.mainPlayer)
                 {
                     Debug.Log("End of game!");
