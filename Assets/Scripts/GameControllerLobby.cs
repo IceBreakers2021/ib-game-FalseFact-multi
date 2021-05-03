@@ -128,4 +128,8 @@ public class GameControllerLobby : MonoBehaviour
     {
         //Ignore for now, making facts does not care.
     }
+    public void ToldPlayerLeft(string webId)
+    {
+        //Ignore for now, not in lobby
+    }
 }

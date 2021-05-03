@@ -520,11 +520,19 @@ public class GameControllerMain : MonoBehaviour
 
         GotoState_Guess();
     }
+    public void ToldPlayerLeft(string webId)
+    {
+        //Ignore for now, making facts does not care.
+        var player = gameManager.players[webId];
+        if(player == null) return;
+        gameManager.players.Remove(webId);
+        Destroy(player.indicator);
+    }
     //TODO: Handle on End Round
-    //TODO: Only allow the current Teller to click the confirm button
-    //TODO: Remove teller from chosing options
     //TODO: Teller can't click confirm if there are no other people
     //TODO: Teller can't click confirm if not everyone who has joined has chosen an option
     //TODO: Each Player should have a field for if they have delivered their choices, and send on request for players.
+    //TODO: Players should hold state of their choice, and send this along to the other players when they join
     //TODO: Method of moving on to another person, either buttons for teller to click or next person in sorted dictionary.
+    //TODO: Pass scene state to react, to avoid calling methods that don't exist.
 }
