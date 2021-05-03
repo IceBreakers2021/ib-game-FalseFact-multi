@@ -150,20 +150,27 @@ public class GameControllerMain : MonoBehaviour
 
         Debug.Log("Going into gotoStateGuess");
         state = State.Guess;
+
         SetButtonInteractable_ButtonFacts(true);
         SetImageColor_ButtonFacts_revealed(false);
         SetImageAlpha_PlayerIndicatorStatus(false);
 
         // Organizes buttons based on falseFactPosition.
         SetUpButtonText();
-
+        // Set the help text
         textInstructions.text = instructionTexts[0];
+        // Display the current teller name and icon
+        var teller = gameManager.players[gameManager.currentTeller];
+        textPlayerNameTeller.GetComponent<Text>().text = teller.name;
+        imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[teller.spriteNumber];
+
         Debug.Log("Done with gotoState");
     }
 
     void GotoState_Result()
     {
         state = State.Result;
+
         SetButtonInteractable_ButtonFacts(false);
         SetImageColor_ButtonFacts_revealed(true);
         SetImageAlpha_PlayerIndicatorStatus(true);
