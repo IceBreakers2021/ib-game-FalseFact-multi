@@ -49,7 +49,7 @@ public class GameControllerMain : MonoBehaviour
     public FactColors factColors;
     public GameObject imagePlayerIconTeller;
     public GameObject textPlayerNameTeller;
-    public Text textInstructions;
+    public GameObject buttonHelp;
     public string[] instructionTexts;
     public GameObject textTitle;
 
@@ -85,9 +85,6 @@ public class GameControllerMain : MonoBehaviour
         }
 
         // Initialize all players as disabled
-
-        // Disable help text
-        textInstructions.enabled = false;
 
         // Other initializations
         textTitle.GetComponent<Text>().text = gameID;
@@ -158,7 +155,7 @@ public class GameControllerMain : MonoBehaviour
         // Organizes buttons based on falseFactPosition.
         SetUpButtonText();
         // Set the help text
-        textInstructions.text = instructionTexts[0];
+        buttonHelp.GetComponent<HelpInstructions>().SetText(instructionTexts[0]);
         // Display the current teller name and icon
         var teller = gameManager.players[gameManager.currentTeller];
         textPlayerNameTeller.GetComponent<Text>().text = teller.name;
@@ -175,7 +172,7 @@ public class GameControllerMain : MonoBehaviour
         SetImageColor_ButtonFacts_revealed(true);
         SetImageAlpha_PlayerIndicatorStatus(true);
 
-        textInstructions.text = instructionTexts[1];
+        buttonHelp.GetComponent<HelpInstructions>().SetText(instructionTexts[1]);
     }
 
 
@@ -481,11 +478,6 @@ public class GameControllerMain : MonoBehaviour
         //Easiest is to just resend the Join_Game message
         Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber,
             gameManager.mainPlayer.hasToldInt());
-    }
-
-    public void OnClick_Help()
-    {
-        textInstructions.enabled = !textInstructions.enabled;
     }
 
     public void SetCurrentTeller(string inputParams)

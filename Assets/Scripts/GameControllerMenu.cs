@@ -17,7 +17,7 @@ public class GameControllerMenu : MonoBehaviour
     public GameObject inputFieldGameID;
     public GameObject imagePlayerIcon;
     public GameObject inputFieldPlayerName;
-    public Text textInstructions;
+    public GameObject buttonHelp;
     public string[] instructionTexts;
 
     // Variables
@@ -40,9 +40,8 @@ public class GameControllerMenu : MonoBehaviour
         spriteNumber = Random.Range(0, playerSprites.Length);
         imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[spriteNumber];
 
-        // Setup help text
-        textInstructions.text = instructionTexts[0];
-        textInstructions.enabled = false;
+        // Set the help text
+        buttonHelp.GetComponent<HelpInstructions>().SetText(instructionTexts[0]);
     }
 
     // Update is called once per frame
@@ -118,12 +117,6 @@ public class GameControllerMenu : MonoBehaviour
         // Change player icon
         spriteNumber = sprite_nr;
         imagePlayerIcon.GetComponent<Image>().sprite = playerSprites[sprite_nr];
-    }
-
-
-    public void OnClick_Help()
-    {
-        textInstructions.enabled = !textInstructions.enabled;
     }
 
     public void OnEndEdit_GameID(string value)
