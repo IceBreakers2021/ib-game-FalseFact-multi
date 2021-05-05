@@ -45,7 +45,6 @@ public class GameControllerMain : MonoBehaviour
     public GameObject buttonFact1;
     public GameObject buttonFact2;
     public GameObject buttonFact3;
-    public GameObject confirmButton;
     public FactColors factColors;
     public GameObject imagePlayerIconTeller;
     public GameObject textPlayerNameTeller;
@@ -128,7 +127,7 @@ public class GameControllerMain : MonoBehaviour
         gameManager.currentTeller = gameManager.mainPlayer.webId;
         gameManager.falseFactPosition = Random.Range(1, 4);
         gameManager.myFacts.CopyTo(gameManager.currentFacts, 0);
-        confirmButton.SetActive(true);
+        buttonConfirm.SetActive(true);
     }
 
     void SetupAsPlayer()
@@ -162,6 +161,8 @@ public class GameControllerMain : MonoBehaviour
             imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[teller.spriteNumber];
         }
 
+        buttonConfirm.GetComponentInChildren<Text>().text = "Reveal";
+
         Debug.Log("Done with gotoState");
     }
 
@@ -174,6 +175,8 @@ public class GameControllerMain : MonoBehaviour
         SetImageAlpha_PlayerIndicatorStatus(true);
 
         buttonHelp.GetComponent<HelpInstructions>().SetText(instructionTexts[1]);
+
+        buttonConfirm.GetComponentInChildren<Text>().text = "Next Round";
     }
 
 
@@ -406,7 +409,7 @@ public class GameControllerMain : MonoBehaviour
             case State.Result:
                 //The current teller
                 var nextTeller = gameManager.getNextTeller();
-                confirmButton.SetActive(false);
+                buttonConfirm.SetActive(false);
                 if (nextTeller == gameManager.mainPlayer)
                 {
                     Debug.Log("End of game!");
