@@ -113,6 +113,10 @@ public class GameControllerMain : MonoBehaviour
         else
         {
             SetupAsPlayer();
+            foreach (var player in gameManager.players.Values.Where(player => player.selectedFact != -1))
+            {
+                SelectFact(player.selectedFact, player);
+            }
             Debug.Log("Done setting up as player");
         }
 
@@ -139,12 +143,6 @@ public class GameControllerMain : MonoBehaviour
 
     void GotoState_Guess()
     {
-        foreach (var player in gameManager.players.Values)
-        {
-            player.indicator.SetActive(false);
-            player.selectedFact = -1; //resetting for next round
-        }
-
         Debug.Log("Going into gotoStateGuess");
         state = State.Guess;
 
@@ -417,6 +415,7 @@ public class GameControllerMain : MonoBehaviour
                 {
                     Tell_Next_Round(nextTeller.webId);
                     gameManager.currentTeller = nextTeller.webId;
+                    clearIcons();
                     GotoState_Guess();
                 }
 
@@ -463,6 +462,8 @@ public class GameControllerMain : MonoBehaviour
     {
         //parameters, split to get 4 values, name (string), sprite (string),  hasTold (int), selectedFact(int), webid (string),
         string[] parameters = input.Split('|');
+        string webId = parameters[4];
+        if (gameManager.players.ContainsKey(webId)) return; // Don't re add players you know
         bool hasTold = int.Parse(parameters[2]) == 1;
         Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[4], hasTold);
         newPlayer.selectedFact = int.Parse(parameters[3]);
@@ -472,6 +473,10 @@ public class GameControllerMain : MonoBehaviour
         {
             textPlayerNameTeller.GetComponent<Text>().text = newPlayer.name;
             imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[newPlayer.spriteNumber];
+        }
+        else if (newPlayer.selectedFact != -1)
+        {
+            SelectFact(newPlayer.selectedFact, newPlayer);
         }
     }
 
@@ -539,7 +544,18 @@ public class GameControllerMain : MonoBehaviour
             SetupAsPlayer();
         }
 
+        clearIcons();
+
         GotoState_Guess();
+    }
+
+    public void clearIcons()
+    {
+        foreach (var player in gameManager.players.Values)
+        {
+            player.indicator.SetActive(false);
+            player.selectedFact = -1; //resetting for next round
+        }
     }
     public void ToldPlayerLeft(string webId)
     {
