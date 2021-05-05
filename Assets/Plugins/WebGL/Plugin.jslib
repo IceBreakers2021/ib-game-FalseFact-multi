@@ -3,8 +3,8 @@ mergeInto(LibraryManager.library, {
         ReactUnityWebGL.Set_Lobby(Pointer_stringify(_channelName));
    },
    
-   Join_Game: function (playerName, avatarId, hasTold) {
-     ReactUnityWebGL.Join_Game(Pointer_stringify(playerName), avatarId, hasTold);
+   Join_Game: function (playerName, avatarId, hasTold, selectedFact) {
+     ReactUnityWebGL.Join_Game(Pointer_stringify(playerName), avatarId, hasTold, selectedFact);
    },
  
    Change_Choice: function (playerWebId, choice) {

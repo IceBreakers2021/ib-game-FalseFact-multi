@@ -14,7 +14,6 @@ public class Player
     public bool hastTold;
     //public List facts (false, true, true)
 
-    [System.NonSerialized]
     public int selectedFact = -1;
     [System.NonSerialized]
     public Vector2 indicatorPosition;

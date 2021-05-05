@@ -1757,9 +1757,7 @@ MonoBehaviour:
   imagePlayerIcon: {fileID: 1051643067}
   inputFieldPlayerName: {fileID: 355701986}
   buttonHelp: {fileID: 95427665}
-  instructionTexts:
-  - Fill in your name and click on your icon to change it. Type in the room you want
-    to join and click on the button to continue.
+  instructionTexts: []
 --- !u!4 &1845216351
 Transform:
   m_ObjectHideFlags: 0

@@ -30,7 +30,7 @@ public class GameControllerMain : MonoBehaviour
     private static extern void End_Round();
 
     [DllImport("__Internal")]
-    private static extern void Join_Game(string playerName, int avatarId, int hasTold);
+    private static extern void Join_Game(string playerName, int avatarId, int hasTold, int selectedFact);
 
     [DllImport("__Internal")]
     private static extern void Reply_Current_Teller(string webid, int falsePosition, string false1, string true1,
@@ -126,7 +126,7 @@ public class GameControllerMain : MonoBehaviour
         gameManager.myFacts.CopyTo(gameManager.currentFacts, 0);
         confirmButton.SetActive(true);
     }
-
+    
     void SetupAsPlayer()
     {
         //TODO: Should have gotten falseFactPosition, current facts, at the same time as currentTeller
@@ -157,9 +157,12 @@ public class GameControllerMain : MonoBehaviour
         // Set the help text
         buttonHelp.GetComponent<HelpInstructions>().SetText(instructionTexts[0]);
         // Display the current teller name and icon
-        var teller = gameManager.players[gameManager.currentTeller];
-        textPlayerNameTeller.GetComponent<Text>().text = teller.name;
-        imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[teller.spriteNumber];
+        if (gameManager.players.ContainsKey(gameManager.currentTeller))
+        {
+            var teller = gameManager.players[gameManager.currentTeller];
+            textPlayerNameTeller.GetComponent<Text>().text = teller.name;
+            imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[teller.spriteNumber];
+        }
 
         Debug.Log("Done with gotoState");
     }
@@ -420,19 +423,19 @@ public class GameControllerMain : MonoBehaviour
 
     public void OnClick_Fact1()
     {
-        if (gameManager.isTelling()) return;
+        if (gameManager.isTelling() || gameManager.mainPlayer.selectedFact == 1) return;
         SelectFact(1, gameManager.mainPlayer);
     }
 
     public void OnClick_Fact2()
     {
-        if (gameManager.isTelling()) return;
+        if (gameManager.isTelling() || gameManager.mainPlayer.selectedFact == 2) return;
         SelectFact(2, gameManager.mainPlayer);
     }
 
     public void OnClick_Fact3()
     {
-        if (gameManager.isTelling()) return;
+        if (gameManager.isTelling() || gameManager.mainPlayer.selectedFact == 3) return;
         SelectFact(3, gameManager.mainPlayer);
     }
 
@@ -451,13 +454,18 @@ public class GameControllerMain : MonoBehaviour
     //From javascript, adds new player to the dictionary of known players, according to their web id.
     public void OnPlayer_Joins(string input)
     {
-        //parameters, split to get 4 values, name (string), sprite (string),  hasTold (int), webid (string),
-        Debug.Log("New Player joined");
+        //parameters, split to get 4 values, name (string), sprite (string),  hasTold (int), selectedFact(int), webid (string),
         string[] parameters = input.Split('|');
         bool hasTold = int.Parse(parameters[2]) == 1;
-        Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[3], hasTold);
+        Player newPlayer = new Player(parameters[0], int.Parse(parameters[1]), parameters[4], hasTold);
+        newPlayer.selectedFact = int.Parse(parameters[3]);
         SetupSpriteForPlayer(newPlayer);
         gameManager.Add_PLayer(newPlayer);
+        if (newPlayer.webId == gameManager.currentTeller)
+        {
+            textPlayerNameTeller.GetComponent<Text>().text = newPlayer.name;
+            imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[newPlayer.spriteNumber];
+        }
     }
 
     //Adds an indicator to the scene and to this player, based on player details.
@@ -477,12 +485,18 @@ public class GameControllerMain : MonoBehaviour
     {
         //Easiest is to just resend the Join_Game message
         Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber,
-            gameManager.mainPlayer.hasToldInt());
+            gameManager.mainPlayer.hasToldInt(), gameManager.mainPlayer.selectedFact);
     }
 
     public void SetCurrentTeller(string inputParams)
     {
         gameManager.setCurrentTeller(inputParams);
+        if (gameManager.players.ContainsKey(gameManager.currentTeller))
+        {
+            var teller = gameManager.players[gameManager.currentTeller];
+            textPlayerNameTeller.GetComponent<Text>().text = teller.name;
+            imagePlayerIconTeller.GetComponent<Image>().sprite = playerSprites[teller.spriteNumber];
+        }
         SetUpButtonText();
     }
 

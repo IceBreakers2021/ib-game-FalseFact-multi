@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class GameControllerLobby : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void Join_Game(string playerName, int avatarId, int hasTold);
+    private static extern void Join_Game(string playerName, int avatarId, int hasTold, int selectedFact);
 
     [DllImport("__Internal")]
     private static extern void Ask_For_Current_Teller();
@@ -70,9 +70,8 @@ public class GameControllerLobby : MonoBehaviour
             return; // If any fact is not filled, don't allow th play button to work.
         }
         // Sends along all necessary info for other clients to add this player to their game
-        //TODO: Get the current teller, then join game
 #if (UNITY_WEBGL == true && UNITY_EDITOR == false)
-        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber, gameManager.mainPlayer.hasToldInt());
+        Join_Game(gameManager.mainPlayer.name, gameManager.mainPlayer.spriteNumber, gameManager.mainPlayer.hasToldInt(), gameManager.mainPlayer.selectedFact);
 #endif
         SceneManager.LoadScene(sceneName: "MainGame");
     }
