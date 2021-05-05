@@ -38,9 +38,9 @@ public class GameControllerMain : MonoBehaviour
 
     public GameObject buttonConfirm;
     public GameObject playerIndicatorPrefab;
-    public float indicatorMoveSpeed;
-    public float indicatorMarginStart;
-    public float indicatorMargin;
+    public int indicatorMoveSpeed;
+    public int indicatorMarginStart;
+    public int indicatorMargin;
     public float revealedWrongAlpha;
     public GameObject buttonFact1;
     public GameObject buttonFact2;
@@ -126,7 +126,7 @@ public class GameControllerMain : MonoBehaviour
         gameManager.myFacts.CopyTo(gameManager.currentFacts, 0);
         confirmButton.SetActive(true);
     }
-    
+
     void SetupAsPlayer()
     {
         //TODO: Should have gotten falseFactPosition, current facts, at the same time as currentTeller
@@ -299,18 +299,21 @@ public class GameControllerMain : MonoBehaviour
 
         //// Handle indicator positions
         // Get old position
-        Vector2 targetPos = player.indicatorPosition;
+        Vector2 targetPos;
+        targetPos.x = (int)player.indicatorPosition.x;
+        targetPos.y = (int)player.indicatorPosition.y;
         // Calculate new X positions of other indicators
-        for (float xx = (targetPos.x + indicatorMargin);
-            xx < (targetPos.x + gameManager.Get_numberPlayers() * indicatorMargin);
+        for (int xx = ((int)targetPos.x + indicatorMargin);
+            xx < ((int)targetPos.x + gameManager.Get_numberPlayers() * indicatorMargin);
             xx += indicatorMargin)
         {
             foreach (var playersValue in gameManager.players.Values)
             {
                 if (!playersValue.indicator.activeSelf) continue;
-                if (Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE &&
-                    Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)
+                if ((int)playersValue.indicatorPosition.x == xx &&
+                    (int)playersValue.indicatorPosition.y == (int)targetPos.y)
                 {
+                    playersValue.indicatorPosition.x = (int)playersValue.indicatorPosition.x;
                     playersValue.indicatorPosition.x -= indicatorMargin;
                 }
             }
@@ -320,13 +323,13 @@ public class GameControllerMain : MonoBehaviour
         switch (fact_nr)
         {
             case 1:
-                targetPos.y = buttonFact1.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                targetPos.y = (int)buttonFact1.GetComponentInParent<RectTransform>().anchoredPosition.y;
                 break;
             case 2:
-                targetPos.y = buttonFact2.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                targetPos.y = (int)buttonFact2.GetComponentInParent<RectTransform>().anchoredPosition.y;
                 break;
             case 3:
-                targetPos.y = buttonFact3.GetComponentInParent<RectTransform>().anchoredPosition.y;
+                targetPos.y = (int)buttonFact3.GetComponentInParent<RectTransform>().anchoredPosition.y;
                 break;
             default:
                 // stay at current Y
@@ -334,32 +337,36 @@ public class GameControllerMain : MonoBehaviour
         }
 
         // Calculate new X position of current indicator
-        for (float xx = indicatorMarginStart;
+        for (int xx = indicatorMarginStart;
             xx < (indicatorMarginStart + gameManager.Get_numberPlayers() * indicatorMargin);
             xx += indicatorMargin)
         {
             bool ok = true;
             foreach (var playersValue in gameManager.players.Values)
             {
-                if (playersValue == gameManager.mainPlayer || !playersValue.indicator.activeSelf) continue;
-                if (!(Math.Abs(playersValue.indicatorPosition.x - xx) < TOLERANCE) ||
-                    !(Math.Abs(playersValue.indicatorPosition.y - targetPos.y) < TOLERANCE)) continue;
-                ok = false;
+                if (player == playersValue || !playersValue.indicator.activeSelf) continue;
+                if ((int)playersValue.indicatorPosition.x == xx && (int)playersValue.indicatorPosition.y == targetPos.y)
+                {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok)
+            {
+                targetPos.x = xx;
                 break;
             }
-
-            if (!ok) continue;
-            targetPos.x = xx;
-            break;
         }
 
         // Apply
         player.indicatorPosition = targetPos;
 
-        if (player.indicator.activeSelf) return;
-        // Set initial indicator position
-        player.rectTransform.anchoredPosition = player.indicatorPosition;
-        player.indicator.SetActive(true);
+        if (!player.indicator.activeSelf)
+        {
+            // Set initial indicator position
+            player.indicator.SetActive(true);
+            player.rectTransform.anchoredPosition = player.indicatorPosition;
+        }
     }
 
     void MoveIndicators()
