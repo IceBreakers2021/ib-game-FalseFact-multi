@@ -1462,7 +1462,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1540008787
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1515,13 +1515,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Thanks you for playing!
-
-
-    Subscribe to our newsletter for the latest
-    updates:
-
-    https://forms.gle/F7BimWz1j63vspUZ6'
+  m_Text: Thank you for playing!
 --- !u!222 &1540008789
 CanvasRenderer:
   m_ObjectHideFlags: 0
