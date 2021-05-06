@@ -28,7 +28,10 @@ public class GameControllerMain : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void End_Round();
-
+    
+    [DllImport("__Internal")]
+    private static extern void Tell_End_Game();
+    
     [DllImport("__Internal")]
     private static extern void Join_Game(string playerName, int avatarId, int hasTold, int selectedFact);
 
@@ -36,22 +39,23 @@ public class GameControllerMain : MonoBehaviour
     private static extern void Reply_Current_Teller(string webid, int falsePosition, string false1, string true1,
         string true2);
 
-    public GameObject buttonConfirm;
-    public GameObject playerIndicatorPrefab;
     public int indicatorMoveSpeed;
     public int indicatorMarginStart;
-    public int indicatorMargin;
     public float revealedWrongAlpha;
+    public int indicatorMargin;
+    public string[] instructionTexts;
+    public FactColors factColors;
+    public GameObject playerIndicatorPrefab;
+    public GameObject buttonConfirm;
     public GameObject buttonFact1;
     public GameObject buttonFact2;
     public GameObject buttonFact3;
-    public FactColors factColors;
     public GameObject imagePlayerIconTeller;
     public GameObject textPlayerNameTeller;
     public GameObject buttonHelp;
-    public string[] instructionTexts;
     public GameObject textTitle;
-
+    public GameObject endText;
+    
     enum State
     {
         Guess,
@@ -410,9 +414,11 @@ public class GameControllerMain : MonoBehaviour
                 //The current teller
                 var nextTeller = gameManager.getNextTeller();
                 buttonConfirm.SetActive(false);
-                if (nextTeller == gameManager.mainPlayer)
+                if (nextTeller.webId == gameManager.currentTeller)
                 {
                     Debug.Log("End of game!");
+                    Tell_End_Game();
+                    EndOfGame();
                 }
                 else
                 {
@@ -429,6 +435,24 @@ public class GameControllerMain : MonoBehaviour
         }
     }
 
+    public void EndOfGame()
+    {
+        endText.SetActive(true);
+        //All other objects set to false
+        foreach (var player in gameManager.players.Values)
+        {
+            player.indicator.SetActive(false);
+        }
+        playerIndicatorPrefab.SetActive(false);
+        buttonConfirm.SetActive(false);
+        buttonFact1.SetActive(false);
+        buttonFact2.SetActive(false);
+        buttonFact3.SetActive(false);
+        imagePlayerIconTeller.SetActive(false);
+        textPlayerNameTeller.SetActive(false);
+        buttonHelp.SetActive(false);
+        textTitle.SetActive(false);
+    }
 
     public void OnClick_Fact1()
     {

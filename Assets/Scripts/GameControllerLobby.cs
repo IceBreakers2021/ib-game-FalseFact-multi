@@ -131,4 +131,9 @@ public class GameControllerLobby : MonoBehaviour
     {
         //Ignore for now, not in lobby
     }
+
+    public void EndOfGame()
+    {
+        //Mmmm... should probably do something more clever here.
+    }
 }

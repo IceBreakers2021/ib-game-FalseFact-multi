@@ -15,6 +15,10 @@ mergeInto(LibraryManager.library, {
     ReactUnityWebGL.Get_Web_Id();
    },
    
+   Tell_End_Game : function() {
+    ReactUnityWebGL.Tell_End_Game();
+   },
+      
    Web_Log : function(line){
     ReactUnityWebGL.Web_Log(Pointer_stringify(line));
    },
